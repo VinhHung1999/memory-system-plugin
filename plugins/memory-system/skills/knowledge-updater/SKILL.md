@@ -82,21 +82,9 @@ For each significant change, determine:
 - Identify which skill's workflow changed
 - Read the current SKILL.md and update the relevant section
 
-### 4. Memory Domain Detection
+### 4. Memory Domain Routing
 
-When routing to `~/.claude/memory/`, pick the right folder:
-
-| Keywords in changes | Store in |
-|---|---|
-| api, endpoint, database, server, auth | `backend-patterns/` |
-| react, vue, component, ui, css, state | `frontend-patterns/` |
-| deploy, docker, kubernetes, ci, cd | `devops-patterns/` |
-| model, training, neural, embedding, llm | `ai-patterns/` |
-| ios, android, react-native, flutter | `mobile-patterns/` |
-| test, qc, qa, automation, appium, playwright | `qa-patterns/` |
-| bug, error, traceback, fix, workaround | `debugging/` |
-| workflow, step-by-step, how-to | `procedures/` |
-| Cross-domain | `universal-patterns/` |
+Delegate to `/coder-memory-store` — it auto-discovers folders by scanning `~/.claude/memory/` and matches content to existing folder names/INDEX.md. It creates new folders only when a genuinely new domain appears, falling back to `universal-patterns/` for one-off insights.
 
 ### 5. Report
 

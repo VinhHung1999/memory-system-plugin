@@ -21,45 +21,51 @@ description: Store universal coding patterns into ~/.claude/memory/ files. Auto-
 
 ## Storage Location
 
-All memories go to `~/.claude/memory/` organized by role:
+All memories go to `~/.claude/memory/` organized by **self-discovered** topic folders.
+
+**No fixed folder list.** Topics emerge organically from actual usage:
 
 ```
 ~/.claude/memory/
-├── README.md
-├── backend-patterns/       ← API, database, auth, server
-├── frontend-patterns/      ← React, Vue, component, UI, state
-├── devops-patterns/        ← Docker, K8s, CI/CD, terraform
-├── ai-patterns/            ← Model, training, LLM, embedding
-├── security-patterns/      ← Vulnerability, encryption, pentest
-├── mobile-patterns/        ← iOS, Android, React Native, Flutter
-├── pm-patterns/            ← Coordination, team, sprint, planning
-├── quant-patterns/         ← Trading, backtest, risk, portfolio
-├── debugging/              ← Bug fixes, error workarounds, tracebacks
-├── procedures/             ← Step-by-step workflows, how-tos, conversions
-├── qa-patterns/            ← Testing, QC, automation, Appium, Playwright
-└── universal-patterns/     ← Cross-domain patterns
+├── <topic-1>/INDEX.md
+├── <topic-2>/INDEX.md
+└── ...
 ```
 
-## Role Detection
+Common topics that tend to appear: `backend-patterns/`, `frontend-patterns/`, `mobile-patterns/`, `debugging/`, `qa-patterns/`, `devops-patterns/`, `universal-patterns/`. But users can have any topic they need — `blockchain-patterns/`, `game-dev/`, `ml-ops/`, etc.
 
-Pick role from task context:
+## Folder Routing (Smart Auto-Discovery)
 
-| Keywords | Role |
-|----------|------|
-| api, endpoint, database, server, auth | `backend-patterns` |
-| react, vue, component, ui, css, state | `frontend-patterns` |
-| deploy, docker, kubernetes, ci, cd | `devops-patterns` |
-| model, training, neural, embedding, llm | `ai-patterns` |
-| vulnerability, encryption, pentest | `security-patterns` |
-| ios, android, react-native, flutter | `mobile-patterns` |
-| coordination, team, sprint, planning | `pm-patterns` |
-| trading, backtest, portfolio, risk | `quant-patterns` |
-| bug, error, traceback, fix, workaround | `debugging` |
-| workflow, step-by-step, how-to, conversion | `procedures` |
-| test, qc, qa, automation, appium, playwright, selenium | `qa-patterns` |
-| Cross-domain or unclear | `universal-patterns` |
+When storing a memory, pick the folder in this order:
 
-Create the directory if it doesn't exist.
+**Step 1 — List existing folders**
+```bash
+ls -d ~/.claude/memory/*/
+```
+
+**Step 2 — Match task context to an existing folder**
+- Read the task/insight content
+- Compare to existing folder names + their `INDEX.md` (first 30 lines) if present
+- If clear match → **use existing folder** (strongly prefer reuse over creating new)
+
+**Step 3 — If no existing folder matches well**
+- Is the insight genuinely a **new domain**? (e.g., first blockchain pattern in a codebase that's never had any)
+  → Create new folder with kebab-case name, suffix `-patterns` if unclear (e.g., `blockchain-patterns/`)
+- Is the insight **general / cross-domain**?
+  → Save to `universal-patterns/` (create if missing)
+
+**Step 4 — Create the chosen folder if it doesn't exist**
+
+### Naming rules for new folders
+
+- **kebab-case** only
+- Use meaningful domain names: `blockchain-patterns`, `game-dev`, `data-engineering`
+- **Avoid** one-off names (`feature-123-patterns` ❌) or project names (`acme-corp-patterns` ❌)
+- When in doubt → `universal-patterns/`
+
+### Anti-fragmentation rule
+
+Don't create a new folder for a **single** insight unless you're very confident it's a distinct domain. If only 1 insight might go there, prefer `universal-patterns/` until you have 2-3 related ones — then reorganize later.
 
 ---
 

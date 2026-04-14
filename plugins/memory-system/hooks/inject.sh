@@ -14,8 +14,8 @@ INPUT=$(cat)
 HOOK_EVENT=$(echo "$INPUT" | sed -n 's/.*"hook_event_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
 HOOK_EVENT="${HOOK_EVENT:-PreToolUse}"
 
-# Exit silently if memory dir missing
-[ ! -d "$MEMORY_DIR" ] && exit 0
+# Auto-create memory dir on first run (zero-setup for new users)
+mkdir -p "$MEMORY_DIR"
 
 # ANSI color codes
 C_RESET=$'\033[0m'
