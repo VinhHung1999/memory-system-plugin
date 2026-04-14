@@ -72,18 +72,22 @@ This plugin fixes that with **4 complementary layers** and **auto-sync enforceme
 
 ## 🚀 Installation
 
-### Via Claude Code plugin manager
-```bash
-# Clone or install from marketplace
-cd ~/.claude/plugins
-git clone https://github.com/hungphu/memory-system-plugin memory-system
+### Via Claude Code marketplace (recommended)
+
+In Claude Code, run:
+
+```
+/plugin marketplace add VinhHung1999/memory-system-plugin
+/plugin install memory-system@memory-system
 ```
 
-Then in Claude Code: `/plugin enable memory-system`
+That's it. Skills will be available as `/memory-system:*` and hooks fire automatically.
 
 ### Via `--plugin-dir` (local testing)
+
 ```bash
-claude --plugin-dir ~/memory-system-plugin
+git clone https://github.com/VinhHung1999/memory-system-plugin.git
+claude --plugin-dir ./memory-system-plugin/plugins/memory-system
 ```
 
 ---
