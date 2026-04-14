@@ -1,6 +1,6 @@
 # 🧠 Memory System — Claude Code Plugin
 
-[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)](./CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![Marketplace](https://img.shields.io/badge/marketplace-maniax-purple.svg)](https://github.com/VinhHung1999/memory-system-plugin)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.59+-orange.svg)](https://code.claude.com)
@@ -51,15 +51,16 @@ This plugin fixes that with **4 complementary layers** and **auto-sync enforceme
 
 ## 📦 What's Inside
 
-### Skills (5)
+### Skills (6)
 
 | Skill | Purpose |
 |---|---|
 | `/memory-system:generate-rules` | Analyze codebase and generate `.claude/rules/` files with path-scoped frontmatter |
 | `/memory-system:init-memory` | Initialize project memory — creates `.claude/memory/` and configures `autoMemoryDirectory` |
-| `/memory-system:coder-memory-store` | Save universal patterns to `~/.claude/memory/<domain>/` |
-| `/memory-system:coder-memory-recall` | Retrieve patterns from universal memory |
+| `/memory-system:coder-memory-store` | Save universal patterns to `~/.claude/memory/<domain>/<category>/` |
+| `/memory-system:coder-memory-recall` | Retrieve patterns from universal memory (2-level aware) |
 | `/memory-system:knowledge-updater` | Analyze recent changes and route to correct knowledge store |
+| `/memory-system:reorganize` | Migrate legacy flat memory files into 2-level hierarchy |
 
 ### Hooks (3)
 

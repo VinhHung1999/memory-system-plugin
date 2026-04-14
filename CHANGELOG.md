@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] — 2026-04-14
+
+### Added
+- **2-level memory hierarchy**: `~/.claude/memory/<domain>/<category>/<file>.md`
+  - Level 1 (domain): self-discovered, dynamic (e.g., `frontend-patterns/`, `blockchain-patterns/`)
+  - Level 2 (category): 5 defaults (`bugs/`, `patterns/`, `decisions/`, `procedures/`, `structure/`) + extensible when defaults don't fit
+- **`/memory-system:reorganize`** — new skill that migrates legacy flat files into the 2-level structure. Threshold-aware (skips domains with ≤ 3 files).
+- **Tie-breaker priority** when insight fits multiple categories: bugs > decisions > procedures > structure > patterns
+- **Flat/sub threshold**: domains with ≤ 3 files stay flat; > 3 files use 2-level. Keeps small domains simple.
+
+### Changed
+- `coder-memory-store` workflow now picks domain AND category (2 decisions instead of 1)
+- `coder-memory-recall` searches narrow to `<domain>/<category>/` first, widens progressively
+- Both INDEX.md levels maintained — category lists entries, domain lists categories + highlights
+
+[1.5.0]: https://github.com/VinhHung1999/memory-system-plugin/releases/tag/v1.5.0
+
 ## [1.4.0] — 2026-04-14
 
 ### Changed

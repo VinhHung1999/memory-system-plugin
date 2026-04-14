@@ -23,56 +23,87 @@ Running the subagent in background keeps the main conversation flowing while the
 
 ---
 
-## Storage Location
-
-All memories live in `~/.claude/memory/`. Topic folders are **self-discovered** — no fixed list.
+## Storage Location (2-level hierarchy)
 
 ```
 ~/.claude/memory/
-├── <topic-1>/INDEX.md
-├── <topic-2>/INDEX.md
-└── ...
+├── <domain>/                    e.g., frontend-patterns, mobile-patterns
+│   ├── INDEX.md                 top-level overview
+│   ├── bugs/
+│   │   ├── INDEX.md
+│   │   └── <insight>.md
+│   ├── patterns/
+│   ├── decisions/
+│   ├── procedures/
+│   └── structure/
+└── <another-domain>/
 ```
 
-Topics emerge based on what user actually works on. Common ones: `backend-patterns/`, `frontend-patterns/`, `mobile-patterns/`, `debugging/`, `qa-patterns/`, `devops-patterns/`, `universal-patterns/`. But users may have any custom topic.
+**Level 1 — Domain** (self-discovered): `backend-patterns/`, `frontend-patterns/`, `mobile-patterns/`, `blockchain-patterns/`, `universal-patterns/`, etc.
 
-## Smart Folder Selection
+**Level 2 — Category** (fixed set): `bugs/`, `patterns/`, `decisions/`, `procedures/`, `structure/`.
 
-**Step 1 — List what exists**
+## Smart Search (2-level)
+
+**Step 1 — List domains**
 ```bash
 ls -d ~/.claude/memory/*/
 ```
 
-**Step 2 — Pick 1-2 folders most relevant to the task**
-- Match task keywords/context to folder names + their INDEX.md content (first 30 lines)
+**Step 2 — Pick 1-2 relevant domains**
+- Match task keywords/context to domain names + their `INDEX.md` (first 30 lines)
 - Always include `universal-patterns/` if unsure
-- Prefer existing folders over guessing
 
-**Step 3 — If no folder matches**
-- Search ALL folders with grep as a fallback
-- Report "No relevant memories found" — fine, not every task has prior learnings
+**Step 3 — Pick relevant CATEGORY within each domain**
+
+Based on task type:
+- Debugging a bug → `bugs/`
+- Looking for best practice → `patterns/`
+- Making architecture decision → `decisions/` + `patterns/`
+- Setting up a workflow → `procedures/`
+- Questioning folder layout → `structure/`
+
+**Step 4 — Read category INDEX first**
+```bash
+cat ~/.claude/memory/<domain>/<category>/INDEX.md
+```
+
+**Step 5 — Grep within scope**
+```bash
+grep -r "keyword" ~/.claude/memory/<domain>/<category>/
+```
+
+Widen if no hits:
+```bash
+grep -r "keyword" ~/.claude/memory/<domain>/     # whole domain
+grep -r "keyword" ~/.claude/memory/              # all domains
+```
 
 ---
 
 ## Workflow
 
-### 1. Identify Relevant Folders
+### 1. Identify Scope (domain + category)
 
-See "Smart Folder Selection" above. Pick 1-2 folders based on existing directory listing.
+See "Smart Search" above. Narrow to `<domain>/<category>/` before searching.
 
-### 2. Read INDEX.md
+### 2. Read INDEX files top-down
 
-Start with `~/.claude/memory/<folder>/INDEX.md` to see what memories exist. This avoids reading every file.
+1. `~/.claude/memory/<domain>/INDEX.md` — overview of categories + highlights
+2. `~/.claude/memory/<domain>/<category>/INDEX.md` — full list of entries
+
+This avoids reading every memory file.
 
 ### 3. Search for Keywords
 
 ```bash
-grep -r "keyword1\|keyword2" ~/.claude/memory/<folder>/
+grep -r "keyword1\|keyword2" ~/.claude/memory/<domain>/<category>/
 ```
 
-Also search across all folders if the first search returns nothing:
+Widen progressively if no hits:
 ```bash
-grep -r "keyword" ~/.claude/memory/
+grep -r "keyword" ~/.claude/memory/<domain>/     # whole domain (all categories)
+grep -r "keyword" ~/.claude/memory/              # all domains (last resort)
 ```
 
 ### 4. Read Relevant Files
