@@ -49,6 +49,193 @@ This plugin fixes that with **4 complementary layers** and **auto-sync enforceme
 
 ---
 
+## 🔄 Memory Flow — Read & Write
+
+### 📖 READ Flow (how Claude recalls memory)
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                      SESSION STARTS                               │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+                 ┌────────────────────────────┐
+                 │ SessionStart hook fires    │
+                 │ inject.sh                   │
+                 └────────────────────────────┘
+                              │
+                              ▼
+     ┌────────────────────────────────────────────────────┐
+     │ 1. Read ~/.claude/memory/MEMORY.md (200 lines)     │
+     │ 2. Preview each <domain>/INDEX.md (10 lines)       │
+     │ 3. List all domains + file counts                  │
+     └────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              systemMessage to user:
+              🚀 Universal Memory loaded
+                └ MEMORY.md: ✓ 910 bytes
+                └ Domain INDEX.md loaded: 7
+                • backend-patterns (6)
+                • frontend-patterns (8)
+                ...
+                              │
+                              ▼
+              additionalContext to Claude:
+              ┌────────────────────────────┐
+              │ Full MEMORY.md content +   │
+              │ all domain INDEX previews  │
+              └────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────────┐
+│  USER ASKS A QUESTION                                             │
+│  Claude already knows what's in memory from SessionStart          │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              Does task match a domain?
+                     │               │
+                   YES              NO
+                     │               │
+                     ▼               ▼
+            /coder-memory-recall   Answer without memory
+                     │
+                     ▼
+     ┌────────────────────────────────────────────────────┐
+     │ 1. ls ~/.claude/memory/*/                           │
+     │ 2. Pick 1-2 relevant domains                        │
+     │ 3. Pick category (bugs/patterns/decisions/…)        │
+     │ 4. Read <domain>/<category>/INDEX.md first          │
+     │ 5. grep for keywords, read top 3-5 files            │
+     │ 6. Return concise summary to main Claude            │
+     └────────────────────────────────────────────────────┘
+                              │
+                              ▼
+                 Main Claude uses recalled patterns
+                 to answer the user's question
+```
+
+### ✍️  WRITE Flow (how Claude stores new patterns)
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│  CLAUDE FINISHES A TASK                                           │
+└──────────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+                 ┌────────────────────────────┐
+                 │ Stop hook fires             │
+                 │ memory_store_reminder.py    │
+                 └────────────────────────────┘
+                              │
+                              ▼
+          Turn counter % 5 == 0 AND tool_calls ≥ 8
+          AND not within 10-min cooldown?
+                     │               │
+                    NO              YES
+                     │               │
+                     ▼               ▼
+                   SKIP         Prompt Claude:
+                              "Any lessons worth
+                               storing?"
+                                      │
+                              ┌───────┴───────┐
+                              │               │
+                             NO              YES
+                              │               │
+                              ▼               ▼
+                      "Nothing worth"   /coder-memory-store
+                                              │
+                                              ▼
+     ┌────────────────────────────────────────────────────┐
+     │ STEP 1: Extract insight (non-obvious, universal)    │
+     │ STEP 2: Pick DOMAIN                                 │
+     │   ├── ls ~/.claude/memory/*/                        │
+     │   ├── Match to existing? → reuse                    │
+     │   ├── Clear new domain? → create <domain>-patterns/ │
+     │   └── Cross-cutting? → universal-patterns/          │
+     │ STEP 3: Pick CATEGORY (if domain has > 3 files)    │
+     │   ├── ls <domain>/*/                                │
+     │   ├── Match existing category? → reuse              │
+     │   ├── Classify into default (tie-breaker priority): │
+     │   │   bugs > decisions > procedures > structure     │
+     │   │   > patterns                                    │
+     │   └── None fits? → create new sub-category          │
+     │       (e.g., animations/, performance/)             │
+     │ STEP 4: Check duplicates in target folder (grep)    │
+     │ STEP 5: Write memory file                           │
+     │ STEP 6: Update INDEX.md at BOTH levels              │
+     │   ├── <domain>/<category>/INDEX.md  (entries list)  │
+     │   └── <domain>/INDEX.md (categories + highlights)   │
+     └────────────────────────────────────────────────────┘
+                              │
+                              ▼
+              Final path example:
+              ~/.claude/memory/
+                frontend-patterns/
+                  decisions/
+                    debounce-autocomplete-300ms.md
+```
+
+### 🔁 SYNC Flow (after significant changes)
+
+```
+User: "Claude, commit these changes"
+              │
+              ▼
+   Claude: git commit -m "..."
+              │
+              ▼
+   ┌──────────────────────┐
+   │ Pre-commit gate fires │
+   │ pre-commit-gate.sh   │
+   └──────────────────────┘
+              │
+              ▼
+   💡 Tip: consider /knowledge-updater before committing
+   (non-blocking — commit still proceeds)
+              │
+              ▼
+   Claude may run /knowledge-updater
+              │
+              ▼
+   Analyzes git diff, routes updates to:
+     ├── CLAUDE.md          (project-wide convention)
+     ├── .claude/rules/     (domain-specific)
+     ├── ~/.claude/memory/  (universal lessons)
+     └── .claude/skills/    (workflow changes)
+              │
+              ▼
+   Claude commits with updated knowledge stores
+```
+
+### 📂 Storage Layout (2-level hierarchy, v1.5+)
+
+```
+~/.claude/memory/
+├── MEMORY.md                       ← master index (auto-loaded every session)
+│
+├── <domain-with-≤3-files>/         ← small domain: FLAT
+│   ├── INDEX.md
+│   └── insight.md
+│
+└── <domain-with->3-files>/         ← large domain: 2-LEVEL
+    ├── INDEX.md                    ← overview (categories + highlights)
+    ├── bugs/
+    │   ├── INDEX.md                ← lists all bug entries
+    │   └── some-bug.md
+    ├── patterns/
+    │   ├── INDEX.md
+    │   └── some-pattern.md
+    ├── decisions/
+    ├── procedures/
+    ├── structure/
+    └── <custom-category>/          ← created when 5 defaults don't fit
+```
+
+---
+
 ## 📦 What's Inside
 
 ### Skills (6)
