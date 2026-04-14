@@ -10,14 +10,14 @@ description: Initialize project memory system. Creates .claude/memory/ with topi
 
 Initialize structured memory for a project. Auto memory will write to `.claude/memory/` inside the project.
 
-**For rules** → use `/generate-rules` (separate skill)
+**For rules** → use `/memory-system:generate-rules` (separate skill)
 
 ## Memory Architecture (Do NOT change this)
 
 | Scope | Mechanism | Location | How |
 |-------|-----------|----------|-----|
 | **Project-specific** | Built-in auto memory | `.claude/memory/` (in project) | Automatic — Claude learns as you work |
-| **Universal** | Skill `/coder-memory-store` | `~/.claude/memory/<domain>/` | Manual or via stop hook (33%) |
+| **Universal** | Skill `/memory-system:coder-memory-store` | `~/.claude/memory/<domain>/` | Manual or via stop hook (33%) |
 
 ---
 
@@ -108,7 +108,7 @@ Write to `.claude/memory/MEMORY.md`:
 ## How This Works
 
 Auto memory writes here automatically as Claude learns project patterns.
-Universal patterns go to ~/.claude/memory/ via /coder-memory-store.
+Universal patterns go to ~/.claude/memory/ via /memory-system:coder-memory-store.
 ```
 
 ### 3b. Topic Folders
@@ -147,8 +147,8 @@ Append:
 ## Project Memory
 
 - Project memory is in `.claude/memory/` — auto memory writes here automatically
-- Universal patterns: `/coder-memory-store` → `~/.claude/memory/`
-- Update knowledge after big changes: `/knowledge-updater`
+- Universal patterns: `/memory-system:coder-memory-store` → `~/.claude/memory/`
+- Update knowledge after big changes: `/memory-system:knowledge-updater`
 ```
 
 ---
@@ -169,8 +169,8 @@ Config:
   autoMemoryEnabled → true
 
 Auto memory will now write project learnings to .claude/memory/.
-Universal patterns: use /coder-memory-store manually.
-For project rules: use /generate-rules.
+Universal patterns: use /memory-system:coder-memory-store manually.
+For project rules: use /memory-system:generate-rules.
 ```
 
 ---

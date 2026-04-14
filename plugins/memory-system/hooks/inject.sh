@@ -56,14 +56,14 @@ $TOPICS"
 Available topic folders:
 $TOPICS_PLAIN
 
-When working on a task, if relevant universal knowledge might exist, read ~/.claude/memory/<topic>/INDEX.md first (or use skill /coder-memory-recall for keyword search). Save new cross-project patterns via /coder-memory-store.
+When working on a task, if relevant universal knowledge might exist, read ~/.claude/memory/<topic>/INDEX.md first (or use skill /memory-system:coder-memory-recall for keyword search). Save new cross-project patterns via /memory-system:coder-memory-store.
 
 Note: project-specific memory is handled separately by built-in auto memory — don't confuse the two."
 else
   # Short reminder on Read — no folder list (already shown at SessionStart)
   SYSTEM_MSG="${ICON} ${C_DIM}Read Universal Memory if relevant → ~/.claude/memory/<topic>/${C_RESET}"
 
-  CONTEXT_MSG="Universal Memory is at ~/.claude/memory/. If the current task matches any topic there, read the relevant <topic>/INDEX.md or specific files. Use /coder-memory-recall for keyword search, /coder-memory-store to save new patterns."
+  CONTEXT_MSG="Universal Memory is at ~/.claude/memory/. If the current task matches any topic there, read the relevant <topic>/INDEX.md or specific files. Use /memory-system:coder-memory-recall for keyword search, /memory-system:coder-memory-store to save new patterns."
 fi
 
 # JSON-escape via python

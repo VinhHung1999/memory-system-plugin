@@ -26,7 +26,7 @@ Is this specific to a file type or directory?
   → YES → .claude/rules/ with paths: frontmatter
 
 Is this a hard-won lesson or non-obvious pattern?
-  → YES (universal) → ~/.claude/memory/ via /coder-memory-store
+  → YES (universal) → ~/.claude/memory/ via /memory-system:coder-memory-store
   → YES (project-specific) → auto memory handles it automatically
 
 Is this a changed workflow or procedure?
@@ -70,13 +70,13 @@ For each significant change, determine:
 **For rules updates:**
 - Check if a matching rule file exists in `.claude/rules/`
 - If yes, update the existing rule file with the new convention
-- If no rules exist at all, suggest running `/generate-rules` (it does deep codebase analysis)
+- If no rules exist at all, suggest running `/memory-system:generate-rules` (it does deep codebase analysis)
 - For adding a single new rule to an existing setup, create one with appropriate `paths:` frontmatter
 
 **For memory updates:**
-- Use skill `/coder-memory-store` for universal patterns (cross-project)
+- Use skill `/memory-system:coder-memory-store` for universal patterns (cross-project)
 - Project-specific learnings are handled by built-in auto memory (automatic, no action needed)
-- Route to correct domain folder based on keywords (see role detection table below)
+- The skill auto-picks or creates the right domain folder — no manual routing needed
 
 **For skills updates:**
 - Identify which skill's workflow changed
@@ -84,7 +84,7 @@ For each significant change, determine:
 
 ### 4. Memory Domain Routing
 
-Delegate to `/coder-memory-store` — it auto-discovers folders by scanning `~/.claude/memory/` and matches content to existing folder names/INDEX.md. It creates new folders only when a genuinely new domain appears, falling back to `universal-patterns/` for one-off insights.
+Delegate to `/memory-system:coder-memory-store` — it auto-discovers folders by scanning `~/.claude/memory/` and matches content to existing folder names/INDEX.md. It creates new folders only when a genuinely new domain appears, falling back to `universal-patterns/` for one-off insights.
 
 ### 5. Report
 
@@ -92,7 +92,7 @@ After making updates, report in 1-2 lines:
 
 ```
 Updated: .claude/rules/backend.md (added new validation pattern for API endpoints)
-Updated: ~/.claude/memory/debugging/ via /coder-memory-store (SSE connection timeout workaround)
+Updated: ~/.claude/memory/debugging/ via /memory-system:coder-memory-store (SSE connection timeout workaround)
 ```
 
 ### 6. Mark as Ran (unblock git commit/push)
@@ -119,4 +119,4 @@ If you don't know the session_id, use 'default' as the key. This is safe — the
 - Don't duplicate — if the knowledge already exists, skip or merge
 - Be concise — rules and CLAUDE.md should be specific and actionable, not verbose
 - Respect scope — project-specific goes to rules/CLAUDE.md, universal goes to memory
-- When updating memory, delegate to `/coder-memory-store` or `/project-memory-store` skills — they handle the file format, INDEX.md, and duplicate checking
+- When updating universal memory, delegate to `/memory-system:coder-memory-store` — it handles the file format, INDEX.md, and duplicate checking. Project-specific memory is handled by built-in auto memory, not by a skill.

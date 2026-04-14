@@ -55,18 +55,18 @@ This plugin fixes that with **4 complementary layers** and **auto-sync enforceme
 
 | Skill | Purpose |
 |---|---|
-| `/generate-rules` | Analyze codebase and generate `.claude/rules/` files with path-scoped frontmatter |
-| `/init-memory` | Initialize project memory — creates `.claude/memory/` and configures `autoMemoryDirectory` |
-| `/coder-memory-store` | Save universal patterns to `~/.claude/memory/<domain>/` |
-| `/coder-memory-recall` | Retrieve patterns from universal memory |
-| `/knowledge-updater` | Analyze recent changes and route to correct knowledge store |
+| `/memory-system:generate-rules` | Analyze codebase and generate `.claude/rules/` files with path-scoped frontmatter |
+| `/memory-system:init-memory` | Initialize project memory — creates `.claude/memory/` and configures `autoMemoryDirectory` |
+| `/memory-system:coder-memory-store` | Save universal patterns to `~/.claude/memory/<domain>/` |
+| `/memory-system:coder-memory-recall` | Retrieve patterns from universal memory |
+| `/memory-system:knowledge-updater` | Analyze recent changes and route to correct knowledge store |
 
 ### Hooks (3)
 
 | Hook | Trigger | Purpose |
 |---|---|---|
 | `inject.sh` | SessionStart, PostCompact, PreToolUse Read | Inject Universal Memory index into context |
-| `pre-commit-gate.sh` | PreToolUse Bash (`git commit`/`push`) | Block until `/knowledge-updater` runs |
+| `pre-commit-gate.sh` | PreToolUse Bash (`git commit`/`push`) | Block until `/memory-system:knowledge-updater` runs |
 | `memory_store_reminder.py` | Stop (every 3rd turn, ≥3 tool calls) | Remind to save universal patterns |
 
 ### Settings
@@ -225,7 +225,7 @@ When you hit a non-obvious bug or pattern:
 
 ### Tier 1: Rules
 
-Use `/generate-rules` (bundled in this plugin) to create `.claude/rules/` files with path-scoped frontmatter:
+Use `/memory-system:generate-rules` (bundled in this plugin) to create `.claude/rules/` files with path-scoped frontmatter:
 
 ```markdown
 ---
@@ -240,7 +240,7 @@ Rules auto-load when Claude reads matching files.
 
 ### Tier 2: Project Memory (auto)
 
-After `/init-memory`:
+After `/memory-system:init-memory`:
 - Built-in auto memory writes to `.claude/memory/<topic>/`
 - Claude learns project-specific patterns automatically
 - No manual action needed
@@ -253,7 +253,7 @@ After `/init-memory`:
 
 ### Tier 4: Sync + Enforcement
 
-- `/knowledge-updater` reviews changes and updates the right store
+- `/memory-system:knowledge-updater` reviews changes and updates the right store
 - Pre-commit gate ensures you never forget to sync before sharing code
 
 ---
@@ -317,7 +317,7 @@ Just create `~/.claude/memory/my-domain/` — the inject hook scans dynamically,
 
 **Gate won't unblock?**
 
-The `/knowledge-updater` skill writes to `~/.claude/knowledge_updater_state.json` with your session ID. If it fails to write, run:
+The `/memory-system:knowledge-updater` skill writes to `~/.claude/knowledge_updater_state.json` with your session ID. If it fails to write, run:
 
 ```bash
 echo '{"<your-session-id>": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}' > ~/.claude/knowledge_updater_state.json

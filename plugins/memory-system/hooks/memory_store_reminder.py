@@ -137,7 +137,7 @@ def main():
             # Block Claude from stopping and provide the reminder
             output = {
                 "decision": "block",
-                "reason": "Check if any hard-earned lessons or failure patterns warrant storage. Use skill /coder-memory-store for universal patterns (cross-project). Project-specific learnings are handled by built-in auto memory. Be selective — only store non-obvious bugs, surprising failures, or patterns you struggled with. If storing: store and report in 1 line. If not: say 'Nothing worth storing.' and move on. NO explanations or analysis."
+                "reason": "Check the last few turns for hard-earned universal lessons worth storing (cross-project). Use skill /memory-system:coder-memory-store — it auto-picks or creates the right domain folder in ~/.claude/memory/. Project-specific learnings are handled by built-in auto memory (not this skill). Be selective — only store non-obvious bugs, surprising failures, or patterns you struggled with. If storing: store and report in 1 line. If not: say 'Nothing worth storing.' and move on. NO explanations or analysis."
             }
             print(json.dumps(output))
             sys.exit(0)
