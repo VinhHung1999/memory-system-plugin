@@ -85,7 +85,7 @@ This fetches the marketplace catalog from GitHub.
 ### Step 2 — Install the plugin
 
 ```
-/plugin install memory-system@memory-system
+/plugin install memory-system@maniax
 ```
 
 Syntax: `/plugin install <plugin-name>@<marketplace-name>`
@@ -108,7 +108,7 @@ claude --plugin-dir ./memory-system-plugin/plugins/memory-system
 ### Updating
 
 ```
-/plugin marketplace update memory-system
+/plugin marketplace update maniax
 ```
 
 ---
