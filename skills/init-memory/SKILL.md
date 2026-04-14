@@ -1,0 +1,186 @@
+---
+name: init-memory
+description: Initialize project memory system. Creates .claude/memory/ with topic folders
+  and configures auto memory to store there. Use when starting a new project, user says
+  "init-memory" or "setup memory", or .claude/memory/ does not exist. For rules, use
+  /generate-rules instead.
+---
+
+# Init Memory
+
+Initialize structured memory for a project. Auto memory will write to `.claude/memory/` inside the project.
+
+**For rules** → use `/generate-rules` (separate skill)
+
+## Memory Architecture (Do NOT change this)
+
+| Scope | Mechanism | Location | How |
+|-------|-----------|----------|-----|
+| **Project-specific** | Built-in auto memory | `.claude/memory/` (in project) | Automatic — Claude learns as you work |
+| **Universal** | Skill `/coder-memory-store` | `~/.claude/memory/<domain>/` | Manual or via stop hook (33%) |
+
+---
+
+## Pre-Flight Checks
+
+1. Check if `.claude/memory/` exists in the project root
+2. If exists → Report what's there, offer to add missing topics. Stop.
+3. If not → Full setup.
+
+---
+
+## Phase 1 — Analyze Project
+
+Detect project type by reading available signals:
+
+1. **Read** (if they exist): `package.json`, `pyproject.toml`, `Cargo.toml`, `go.mod`, `CLAUDE.md`, `README.md`
+2. **Run**: `ls` on project root
+3. **Detect**:
+   - `project_name`: from package.json, pyproject.toml, folder name
+   - `project_type`: `frontend`, `backend`, `fullstack`, `mobile`, `ml`, `data`, `generic`
+
+| Signal | Type |
+|--------|------|
+| React, Vue, Next.js, Nuxt (no backend) | `frontend` |
+| Express, FastAPI, Django, Flask, Spring (no frontend) | `backend` |
+| Both frontend + backend | `fullstack` |
+| React Native, Expo, Flutter, Swift, Kotlin | `mobile` |
+| PyTorch, TensorFlow, scikit-learn | `ml` |
+| pandas, dbt, airflow | `data` |
+| None of the above | `generic` |
+
+---
+
+## Phase 2 — Select Memory Topics
+
+### Always included:
+- `bugs-and-lessons` — Bugs encountered and lessons learned
+- `decisions` — Architecture and technology decisions
+
+### Conditional topics:
+
+| Condition | Topic | Description |
+|-----------|-------|-------------|
+| `frontend` or `fullstack` | `design-decisions` | UI/UX decisions, component patterns (replaces `decisions`) |
+| `backend` or `fullstack` | `api-design` | API endpoints, auth patterns, error handling |
+| `mobile` | `platform-notes` | Platform-specific gotchas, native module issues |
+| Has DB/migrations | `data-model` | Schema, ORM patterns, migration notes |
+| Has Docker/CI | `deployment` | Docker, CI/CD, infrastructure decisions |
+| `ml` | `experiments` | Experiments, hyperparameters, results |
+| Complex folder structure | `architecture` | System structure, module boundaries |
+
+### Rules:
+- **Minimum 3 topics**, **maximum 6 topics**
+- If `design-decisions` selected, drop `decisions` (it replaces it)
+
+### User Confirmation:
+
+```
+Detected: {project_name} ({project_type})
+
+Memory topics:
+1. bugs-and-lessons — Bugs encountered and lessons learned
+2. decisions — Architecture and technology decisions
+3. api-design — API endpoints, auth patterns
+
+Create these? (or suggest changes)
+```
+
+---
+
+## Phase 3 — Create Memory Structure
+
+### 3a. MEMORY.md (entrypoint for auto memory)
+
+Write to `.claude/memory/MEMORY.md`:
+
+```markdown
+# {Project Name} — Project Memory
+
+## Topics
+
+| Topic | Description |
+|-------|-------------|
+| [bugs-and-lessons](bugs-and-lessons/) | Bugs encountered and lessons learned |
+| [decisions](decisions/) | Architecture and technology decisions |
+| ... | ... |
+
+## How This Works
+
+Auto memory writes here automatically as Claude learns project patterns.
+Universal patterns go to ~/.claude/memory/ via /coder-memory-store.
+```
+
+### 3b. Topic Folders
+
+For each topic, create:
+- `.claude/memory/{topic}/` directory
+- `.claude/memory/{topic}/README.md` with brief description of what goes there
+
+---
+
+## Phase 4 — Configure Auto Memory
+
+Set `autoMemoryDirectory` in project local settings so built-in auto memory writes to `.claude/memory/`:
+
+Write or update `.claude/settings.local.json`:
+
+```json
+{
+  "autoMemoryDirectory": ".claude/memory",
+  "autoMemoryEnabled": true
+}
+```
+
+This redirects auto memory from `~/.claude/projects/<project>/memory/` to the project's `.claude/memory/` folder.
+
+---
+
+## Phase 5 — Update CLAUDE.md (Optional)
+
+Only if CLAUDE.md exists and does NOT already mention memory:
+
+Append:
+
+```markdown
+
+## Project Memory
+
+- Project memory is in `.claude/memory/` — auto memory writes here automatically
+- Universal patterns: `/coder-memory-store` → `~/.claude/memory/`
+- Update knowledge after big changes: `/knowledge-updater`
+```
+
+---
+
+## Phase 6 — Final Report
+
+```
+Memory initialized for {project_name}!
+
+Created:
+  .claude/memory/MEMORY.md
+  .claude/memory/bugs-and-lessons/README.md
+  .claude/memory/{topic}/README.md
+  ...
+
+Config:
+  autoMemoryDirectory → .claude/memory/
+  autoMemoryEnabled → true
+
+Auto memory will now write project learnings to .claude/memory/.
+Universal patterns: use /coder-memory-store manually.
+For project rules: use /generate-rules.
+```
+
+---
+
+## Edge Cases
+
+| Scenario | Behavior |
+|----------|----------|
+| Memory already exists | Report existing topics, offer to add more |
+| No CLAUDE.md | Skip Phase 5 |
+| Empty/new project | Use folder name, default topics: bugs-and-lessons, decisions, architecture |
+| Monorepo | Create at repo root |
+| settings.local.json already exists | Merge, don't overwrite existing settings |
