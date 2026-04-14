@@ -90,7 +90,9 @@ Create these? (or suggest changes)
 
 ## Phase 3 — Create Memory Structure
 
-### 3a. MEMORY.md (entrypoint for auto memory)
+> **⚠️ IMPORTANT**: Do NOT skip any sub-step. The system requires BOTH the root `MEMORY.md` AND per-topic `INDEX.md` files. If you only create the topic folders without MEMORY.md, the inject hook will fall back to auto-generating stubs — but the result is inferior to proper init.
+
+### 3a. MEMORY.md (entrypoint — REQUIRED)
 
 Write to `.claude/memory/MEMORY.md`:
 
@@ -111,11 +113,23 @@ Auto memory writes here automatically as Claude learns project patterns.
 Universal patterns go to ~/.claude/memory/ via /memory-system:coder-memory-store.
 ```
 
-### 3b. Topic Folders
+### 3b. Topic Folders (REQUIRED — each needs INDEX.md)
 
-For each topic, create:
-- `.claude/memory/{topic}/` directory
-- `.claude/memory/{topic}/README.md` with brief description of what goes there
+For each topic:
+1. Create directory: `.claude/memory/{topic}/`
+2. Create **INDEX.md** (not README.md — be consistent with universal memory):
+
+   ```markdown
+   # {Topic Name}
+   
+   _{one-line description from the topic definition}_
+   
+   ## Entries
+   
+   _(empty — Claude will append entries here as memories accumulate)_
+   ```
+
+**Do not skip INDEX.md creation** — it's what the inject hook uses to preview each topic at SessionStart.
 
 ---
 

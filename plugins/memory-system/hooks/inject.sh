@@ -17,6 +17,60 @@ HOOK_EVENT="${HOOK_EVENT:-PreToolUse}"
 # Auto-create memory dir on first run (zero-setup for new users)
 mkdir -p "$MEMORY_DIR"
 
+# Auto-bootstrap missing INDEX files so inject has something to load.
+# Creates per-domain INDEX.md stub if missing, and root MEMORY.md if missing.
+
+# Helper: create a per-domain INDEX.md stub
+ensure_domain_index() {
+  local dir="$1"
+  local name
+  name=$(basename "$dir")
+  local index="$dir/INDEX.md"
+  [ -f "$index" ] && return 0
+  cat > "$index" <<EOF
+# ${name}
+
+_Auto-generated stub. Fill with category overview as memories accumulate._
+
+## Categories
+
+_(none yet — add subfolders bugs/, patterns/, decisions/, procedures/, structure/ as memories accumulate past the flat threshold of 3 files)_
+
+## Highlights
+
+_(none yet)_
+EOF
+}
+
+# Ensure per-domain INDEX.md exists for every subfolder
+for dir in "$MEMORY_DIR"/*/; do
+  [ -d "$dir" ] || continue
+  ensure_domain_index "$dir"
+done
+
+# Ensure root MEMORY.md exists
+if [ ! -f "$MEMORY_DIR/MEMORY.md" ]; then
+  {
+    echo "# Memory Master Index"
+    echo ""
+    echo "_Auto-generated. Updated whenever new domains appear._"
+    echo ""
+    echo "## Domains"
+    echo ""
+    echo "| Domain | Description |"
+    echo "|---|---|"
+    for d in "$MEMORY_DIR"/*/; do
+      [ -d "$d" ] || continue
+      dname=$(basename "$d")
+      echo "| [${dname}/](${dname}/INDEX.md) | _(add description)_ |"
+    done
+    echo ""
+    echo "## How this works"
+    echo ""
+    echo "This is your GLOBAL cross-project knowledge base. Each domain has an INDEX.md listing its categories and highlights. Save new patterns via \`/memory-system:coder-memory-store\`."
+  } > "$MEMORY_DIR/MEMORY.md"
+fi
+
 # ANSI color codes
 C_RESET=$'\033[0m'
 C_BOLD=$'\033[1m'
