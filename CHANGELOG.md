@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] — 2026-04-14
+
+### Changed
+- **Relaxed anti-fragmentation rule**: `coder-memory-store` now prefers creating a new domain folder over dumping into `universal-patterns/` — even for the first insight in that domain. This prevents `universal-patterns/` from becoming a junk drawer.
+- Clearer rule: `universal-patterns/` is reserved for genuinely cross-cutting concerns (exponential backoff, retry logic, etc.), not "unclear" insights.
+
+[1.2.0]: https://github.com/VinhHung1999/memory-system-plugin/releases/tag/v1.2.0
+
 ## [1.1.0] — 2026-04-14
 
 ### Changed

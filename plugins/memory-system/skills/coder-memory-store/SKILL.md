@@ -49,10 +49,12 @@ ls -d ~/.claude/memory/*/
 - If clear match → **use existing folder** (strongly prefer reuse over creating new)
 
 **Step 3 — If no existing folder matches well**
-- Is the insight genuinely a **new domain**? (e.g., first blockchain pattern in a codebase that's never had any)
-  → Create new folder with kebab-case name, suffix `-patterns` if unclear (e.g., `blockchain-patterns/`)
-- Is the insight **general / cross-domain**?
-  → Save to `universal-patterns/` (create if missing)
+
+Ask: *"Does this insight have a clear domain?"*
+
+- **YES** → Create new folder immediately, even for the first insight
+  Example domains: `blockchain-patterns`, `game-dev`, `ml-ops`, `claude-code-patterns`, `security-patterns`
+- **NO** (genuinely cross-domain, no clear category) → Save to `universal-patterns/`
 
 **Step 4 — Create the chosen folder if it doesn't exist**
 
@@ -61,11 +63,13 @@ ls -d ~/.claude/memory/*/
 - **kebab-case** only
 - Use meaningful domain names: `blockchain-patterns`, `game-dev`, `data-engineering`
 - **Avoid** one-off names (`feature-123-patterns` ❌) or project names (`acme-corp-patterns` ❌)
-- When in doubt → `universal-patterns/`
+- Suffix `-patterns` when helpful (e.g., `blockchain-patterns` vs just `blockchain`)
 
-### Anti-fragmentation rule
+### Default to creating folders
 
-Don't create a new folder for a **single** insight unless you're very confident it's a distinct domain. If only 1 insight might go there, prefer `universal-patterns/` until you have 2-3 related ones — then reorganize later.
+**Prefer creating a new folder over dumping into universal-patterns.** An empty folder with 1 good insight is better than a bloated `universal-patterns/` that becomes a junk drawer. Future insights with the same domain will populate the folder naturally.
+
+Use `universal-patterns/` **only** for insights that genuinely don't fit any domain — truly cross-cutting concerns (e.g., "exponential backoff with jitter" applies to backend, frontend, mobile, ai…).
 
 ---
 
