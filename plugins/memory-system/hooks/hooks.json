@@ -12,6 +12,17 @@
         ]
       }
     ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/prompt-reminder.sh",
+            "timeout": 3
+          }
+        ]
+      }
+    ],
     "PostCompact": [
       {
         "hooks": [
