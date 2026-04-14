@@ -3,9 +3,15 @@ name: coder-memory-store
 description: Store universal coding patterns into ~/.claude/memory/ files. Auto-invokes after difficult tasks with broadly-applicable lessons. Trigger with "--store" or when user expresses frustration (strong learning signals). Skip for trivial or project-specific patterns (use project-memory-store for those).
 ---
 
-## MANDATORY: Use Task Tool (Sub-Agent)
+## MANDATORY: Use Task Tool (Sub-Agent, Background)
 
-**NEVER execute directly in main context!** Use Task tool with `subagent_type: "general-purpose"` to keep main context clean.
+**NEVER execute directly in main context!** Use Task tool with:
+- `subagent_type: "general-purpose"`
+- `run_in_background: true`
+
+Running the subagent in background keeps the main conversation flowing — you don't block on memory writes. You'll be notified when it completes, and can continue the current task immediately.
+
+**Permissions**: The plugin pre-grants Write/Edit/Read/Bash access to `~/.claude/memory/**` so the subagent can write without permission prompts. If errors appear, check `settings.json` `permissions.allow` has the required patterns.
 
 ---
 

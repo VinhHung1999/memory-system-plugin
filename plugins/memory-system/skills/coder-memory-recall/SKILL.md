@@ -3,9 +3,13 @@ name: coder-memory-recall
 description: Retrieve universal coding patterns from ~/.claude/memory/ files. Auto-invokes before complex tasks or when user says "--recall". Searches relevant role directories based on task context. Skip for trivial tasks.
 ---
 
-## MANDATORY: Use Task Tool (Sub-Agent)
+## MANDATORY: Use Task Tool (Sub-Agent, Background)
 
-**NEVER execute directly in main context!** Use Task tool with `subagent_type: "general-purpose"` to keep main context clean.
+**NEVER execute directly in main context!** Use Task tool with:
+- `subagent_type: "general-purpose"`
+- `run_in_background: true`
+
+Running the subagent in background keeps the main conversation flowing while the recall search happens in parallel. You'll be notified when results arrive.
 
 ---
 

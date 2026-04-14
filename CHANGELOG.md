@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] — 2026-04-14
+
+### Added
+- **Pre-granted permissions** in plugin `settings.json` for `~/.claude/memory/**` (Write, Edit, Read, Bash mkdir/ls/grep). Subagents no longer hit permission prompts when writing memory files.
+- `coder-memory-store` and `coder-memory-recall` now use `run_in_background: true` for their Task subagent calls — main conversation doesn't block on memory operations.
+
+### Fixed
+- Memory writes from subagents previously failed with permission errors because subagents are sandboxed to project scope. Now explicitly granted.
+
+[1.3.0]: https://github.com/VinhHung1999/memory-system-plugin/releases/tag/v1.3.0
+
 ## [1.2.0] — 2026-04-14
 
 ### Changed

@@ -1,3 +1,13 @@
 {
-  "autoMemoryEnabled": true
+  "autoMemoryEnabled": true,
+  "permissions": {
+    "allow": [
+      "Write(~/.claude/memory/**)",
+      "Edit(~/.claude/memory/**)",
+      "Read(~/.claude/memory/**)",
+      "Bash(mkdir -p ~/.claude/memory/**)",
+      "Bash(ls ~/.claude/memory/**)",
+      "Bash(grep * ~/.claude/memory/**)"
+    ]
+  }
 }
