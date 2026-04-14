@@ -1,6 +1,6 @@
 # 🧠 Memory System — Claude Code Plugin
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](./CHANGELOG.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![Marketplace](https://img.shields.io/badge/marketplace-maniax-purple.svg)](https://github.com/VinhHung1999/memory-system-plugin)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-v2.1.59+-orange.svg)](https://code.claude.com)
