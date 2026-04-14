@@ -78,7 +78,11 @@ ${preview}"
   ${C_DIM}└ Domain INDEX.md loaded: ${C_RESET}${C_YELLOW}${indexes_loaded}${C_RESET}
 $TOPICS"
 
-  CONTEXT_MSG="[Universal Memory] This is your GLOBAL knowledge base shared across ALL projects (not project-specific). Stored at ~/.claude/memory/.
+  CONTEXT_MSG="[Universal Memory] Your GLOBAL cross-project knowledge base at ~/.claude/memory/.
+
+**⚠️  BEFORE starting ANY non-trivial task, CHECK THIS MEMORY FIRST.**
+
+The indexes below tell you what's already been learned. If the current task touches a domain/category listed here, **read the relevant file** before reinventing the wheel. Past lessons may save you hours of debugging.
 
 ## Master index (MEMORY.md)
 ${MEMORY_INDEX_CONTENT:-(empty — no MEMORY.md yet)}
@@ -91,9 +95,15 @@ ${DOMAIN_INDEXES:-(no domain INDEX files yet)}
 
 ---
 
-When working on a task, the relevant knowledge may already be above. For deeper search, use skill /memory-system:coder-memory-recall. Save new cross-project patterns via /memory-system:coder-memory-store.
+## Workflow — always follow this order
 
-Note: project-specific memory is handled separately by built-in auto memory — don't confuse the two."
+1. **READ FIRST**: Before coding, scan the indexes above. Does any entry match your task?
+   - If yes → read the full memory file at ~/.claude/memory/<domain>/<category>/<file>.md
+   - If unsure → use skill /memory-system:coder-memory-recall for keyword search
+2. **WORK**: Apply learned patterns. Avoid mistakes already documented.
+3. **STORE**: When you discover a new non-obvious lesson → /memory-system:coder-memory-store
+
+This is universal (cross-project) memory. Project-specific memory is handled separately by built-in auto memory — don't mix the two."
 else
   # Short reminder on Read — no folder list (already shown at SessionStart)
   SYSTEM_MSG="${ICON} ${C_DIM}Read Universal Memory if relevant → ~/.claude/memory/<topic>/${C_RESET}"

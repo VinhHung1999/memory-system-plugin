@@ -26,17 +26,6 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Read",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/inject.sh",
-            "timeout": 5,
-            "statusMessage": "✨ Injecting universal memory index..."
-          }
-        ]
-      },
-      {
         "matcher": "Bash",
         "hooks": [
           {
