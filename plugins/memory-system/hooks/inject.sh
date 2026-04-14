@@ -47,16 +47,51 @@ case "$HOOK_EVENT" in
 esac
 
 if [ "$HOOK_EVENT" = "SessionStart" ] || [ "$HOOK_EVENT" = "PostCompact" ]; then
-  # Full list on session start and after compact (context was cleared)
-  SYSTEM_MSG="${ICON} ${C_BOLD}${C_CYAN}Universal Memory${C_RESET} ${C_DIM}(global, cross-project knowledge) ready at ~/.claude/memory/${C_RESET}
+  # Load MEMORY.md content if exists (truncate to first 200 lines to stay lean)
+  MEMORY_INDEX_CONTENT=""
+  MEMORY_STATUS="✗ not found"
+  if [ -f "$MEMORY_DIR/MEMORY.md" ]; then
+    MEMORY_INDEX_CONTENT=$(head -n 200 "$MEMORY_DIR/MEMORY.md")
+    memory_bytes=$(wc -c < "$MEMORY_DIR/MEMORY.md" | tr -d ' ')
+    MEMORY_STATUS="✓ ${memory_bytes} bytes"
+  fi
+
+  # Also grab each domain's INDEX.md header (first 10 lines) so Claude sees what's inside each
+  DOMAIN_INDEXES=""
+  indexes_loaded=0
+  for dir in "$MEMORY_DIR"/*/; do
+    [ -d "$dir" ] || continue
+    name=$(basename "$dir")
+    if [ -f "$dir/INDEX.md" ]; then
+      preview=$(head -n 10 "$dir/INDEX.md")
+      DOMAIN_INDEXES="${DOMAIN_INDEXES}
+
+### ${name}/INDEX.md (preview)
+${preview}"
+      indexes_loaded=$((indexes_loaded + 1))
+    fi
+  done
+
+  # systemMessage shows what was loaded
+  SYSTEM_MSG="${ICON} ${C_BOLD}${C_CYAN}Universal Memory loaded${C_RESET} ${C_DIM}from ~/.claude/memory/${C_RESET}
+  ${C_DIM}└ MEMORY.md: ${C_RESET}${MEMORY_STATUS}
+  ${C_DIM}└ Domain INDEX.md loaded: ${C_RESET}${C_YELLOW}${indexes_loaded}${C_RESET}
 $TOPICS"
 
   CONTEXT_MSG="[Universal Memory] This is your GLOBAL knowledge base shared across ALL projects (not project-specific). Stored at ~/.claude/memory/.
 
-Available topic folders:
+## Master index (MEMORY.md)
+${MEMORY_INDEX_CONTENT:-(empty — no MEMORY.md yet)}
+
+## Available topic folders
 $TOPICS_PLAIN
 
-When working on a task, if relevant universal knowledge might exist, read ~/.claude/memory/<topic>/INDEX.md first (or use skill /memory-system:coder-memory-recall for keyword search). Save new cross-project patterns via /memory-system:coder-memory-store.
+## Domain INDEX previews
+${DOMAIN_INDEXES:-(no domain INDEX files yet)}
+
+---
+
+When working on a task, the relevant knowledge may already be above. For deeper search, use skill /memory-system:coder-memory-recall. Save new cross-project patterns via /memory-system:coder-memory-store.
 
 Note: project-specific memory is handled separately by built-in auto memory — don't confuse the two."
 else
