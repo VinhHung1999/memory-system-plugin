@@ -72,22 +72,95 @@ This plugin fixes that with **4 complementary layers** and **auto-sync enforceme
 
 ## 🚀 Installation
 
-### Via Claude Code marketplace (recommended)
+### Step 1 — Add the marketplace
 
 In Claude Code, run:
 
 ```
 /plugin marketplace add VinhHung1999/memory-system-plugin
+```
+
+This fetches the marketplace catalog from GitHub.
+
+### Step 2 — Install the plugin
+
+```
 /plugin install memory-system@memory-system
 ```
 
-That's it. Skills will be available as `/memory-system:*` and hooks fire automatically.
+Syntax: `/plugin install <plugin-name>@<marketplace-name>`
 
-### Via `--plugin-dir` (local testing)
+### Step 3 — Verify
+
+```
+/plugin
+```
+
+You should see `memory-system` in the enabled list. Skills are now available as `/memory-system:*`.
+
+### Alternative: local testing
 
 ```bash
 git clone https://github.com/VinhHung1999/memory-system-plugin.git
 claude --plugin-dir ./memory-system-plugin/plugins/memory-system
+```
+
+### Updating
+
+```
+/plugin marketplace update memory-system
+```
+
+---
+
+## 📖 Usage
+
+### Available commands
+
+After install, all skills are prefixed with `memory-system:`:
+
+| Command | When to use |
+|---|---|
+| `/memory-system:init-memory` | First time on a new project — setup `.claude/memory/` folders |
+| `/memory-system:generate-rules` | Create/update `.claude/rules/` with path-scoped conventions |
+| `/memory-system:knowledge-updater` | After significant changes — sync CLAUDE.md/rules/memory/skills |
+| `/memory-system:coder-memory-store` | Save a universal pattern you just learned |
+| `/memory-system:coder-memory-recall` | Search universal memory by keyword |
+
+### Typical workflow
+
+**1. New project setup (once)**
+```
+/memory-system:init-memory         # creates .claude/memory/ + auto memory config
+/memory-system:generate-rules      # creates .claude/rules/*.md from codebase analysis
+```
+
+**2. Daily work (zero effort)**
+- Claude sees Universal Memory index on every session start → `🚀 Universal Memory ready...`
+- Rules auto-load when Claude reads files matching `paths:` patterns
+- Auto memory learns project patterns silently
+- Every 3rd substantial turn → reminder to capture new universal patterns
+
+**3. Before committing**
+```
+# You: "commit these changes"
+# Claude: runs `git commit` → 🚫 BLOCKED by gate
+# Claude: runs /memory-system:knowledge-updater → reviews changes
+# Claude: retries commit → ✅ passes
+```
+
+**4. When you learn something worth remembering**
+```
+/memory-system:coder-memory-store
+# Claude picks the right domain folder (backend-patterns/, debugging/, etc.)
+# Writes a structured memory file
+# Updates INDEX.md
+```
+
+**5. When you need to recall something**
+```
+/memory-system:coder-memory-recall <keyword>
+# Claude greps universal memory folders and returns relevant patterns
 ```
 
 ---
