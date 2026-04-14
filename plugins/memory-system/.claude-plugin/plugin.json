@@ -1,7 +1,7 @@
 {
   "name": "memory-system",
   "description": "4-tier knowledge & memory system for Claude Code: rules + project memory + universal memory + auto-sync. Bundles skills, hooks, and a pre-commit gate that enforces knowledge updates before git commit/push.",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "author": {
     "name": "Phu Hung",
     "url": "https://github.com/VinhHung1999"

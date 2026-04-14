@@ -10,9 +10,9 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 # Configuration
-REMIND_EVERY_N_STOPS = 3  # Fire reminder every Nth stop (e.g., 3 = every 3rd turn)
-MIN_TOOL_CALLS = 3  # Minimum tool calls in session to qualify as substantial
-COOLDOWN_MINUTES = -1  # Disabled for tmux multi-session workflow
+REMIND_EVERY_N_STOPS = 5  # Fire reminder every Nth stop
+MIN_TOOL_CALLS = 8  # Minimum tool calls since last reminder (substantial work)
+COOLDOWN_MINUTES = 10  # Don't fire more than once per N minutes
 STATE_FILE = Path.home() / ".claude" / "memory_store_hook_state.json"
 
 
@@ -103,6 +103,10 @@ def should_remind(input_data, state):
     # Skip if recent turns didn't have enough tool calls
     if recent_tool_calls < MIN_TOOL_CALLS:
         return False, f"Stop #{current} — only {recent_tool_calls} tool calls in last {REMIND_EVERY_N_STOPS} turns (need {MIN_TOOL_CALLS})"
+
+    # Skip if still within cooldown from last reminder
+    if is_within_cooldown(state):
+        return False, f"Stop #{current} — within {COOLDOWN_MINUTES}-minute cooldown from last reminder"
 
     # Update baseline so next check measures new turns only
     last_reminder_tool_counts[session_id] = total_tool_calls
