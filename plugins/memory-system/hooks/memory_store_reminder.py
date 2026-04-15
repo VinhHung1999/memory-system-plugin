@@ -10,9 +10,9 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 # Configuration
-REMIND_EVERY_N_STOPS = 5  # Fire reminder every Nth stop
-MIN_TOOL_CALLS = 8  # Minimum tool calls since last reminder (substantial work)
-COOLDOWN_MINUTES = 10  # Don't fire more than once per N minutes
+REMIND_EVERY_N_STOPS = 3  # Fire reminder every Nth stop
+MIN_TOOL_CALLS = 5  # Minimum tool calls since last reminder (substantial work)
+COOLDOWN_MINUTES = 5  # Don't fire more than once per N minutes
 STATE_FILE = Path.home() / ".claude" / "memory_store_hook_state.json"
 
 
