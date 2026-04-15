@@ -1,0 +1,26 @@
+{
+  "skill_name": "seo-onpage-checklist",
+  "evals": [
+    {
+      "id": 0,
+      "name": "url-audit-real-site",
+      "prompt": "Audit the SEO of https://example.com and tell me what to fix.",
+      "expected_output": "Runs the audit script, produces a scored report with specific failures and fix suggestions. Should mention example.com lacks meta description and structured data.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "html-file-ecommerce-product",
+      "prompt": "I have a product page HTML file at /tmp/eval-product-page.html. Can you check if it's SEO-optimized? I want to know what's missing.",
+      "expected_output": "Runs the audit script on the local file, identifies missing/incomplete on-page SEO items (should catch missing alt text, generic filenames, no schema, missing meta description), and gives concrete fixes.",
+      "files": ["/tmp/eval-product-page.html"]
+    },
+    {
+      "id": 2,
+      "name": "vague-seo-review-request",
+      "prompt": "My blog post at https://example.com isn't ranking. Can you help me figure out why?",
+      "expected_output": "Should recognize this as an SEO audit request (even without the word 'audit'), run the checklist, and lead with the 2-3 most impactful issues. Should not just give generic SEO advice — should use the structured checklist.",
+      "files": []
+    }
+  ]
+}

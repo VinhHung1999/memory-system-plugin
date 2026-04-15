@@ -1,0 +1,16 @@
+{{hero_headline}}
+{{hero_subheadline}}
+
+Hi {{first_name}},
+
+{{offer_detail}} — but only until {{deadline}}.
+
+>>> {{cta_text}}: {{cta_url}}
+
+Why {{customers_count}}+ customers love {{product_name}}:
+"{{testimonial}}" — {{testimonial_author}}
+
+---
+{{brand_name}} · {{physical_address}}
+Preferences: {{preferences_url}}
+Unsubscribe: {{unsubscribe_url}}

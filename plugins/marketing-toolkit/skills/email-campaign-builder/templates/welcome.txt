@@ -1,0 +1,18 @@
+Welcome, {{first_name}}!
+
+Thanks for joining {{brand_name}}. You signed up because {{value_prop}}, and we're excited to help.
+
+Here's what to expect: {{cadence_and_content}}.
+
+YOUR FIRST STEP
+{{first_action_pitch}}
+
+{{cta_text}}: {{cta_url}}
+
+Trusted by {{social_proof_count}}+ {{social_proof_type}}:
+"{{testimonial}}" — {{testimonial_author}}
+
+---
+{{brand_name}} · {{physical_address}}
+Update preferences: {{preferences_url}}
+Unsubscribe: {{unsubscribe_url}}

@@ -1,0 +1,22 @@
+{{headline_curiosity_hook}}
+{{subheadline_problem_statement}}
+
+Hi {{first_name}},
+
+{{pain_point_empathy}}
+
+That's why we built {{brand_name}} — {{one_sentence_value_prop}}.
+
+HERE'S HOW IT WORKS
+1. {{step_1}}
+2. {{step_2}}
+3. {{step_3}}
+
+>>> {{cta_text}}: {{cta_url}}
+
+{{social_proof_sentence}}
+
+---
+You're receiving this because {{consent_basis}}.
+{{brand_name}} · {{physical_address}}
+Unsubscribe: {{unsubscribe_url}}

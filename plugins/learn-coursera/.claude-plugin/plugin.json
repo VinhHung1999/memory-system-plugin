@@ -1,0 +1,11 @@
+{
+  "name": "learn-coursera",
+  "description": "Meta-skill for turning Coursera courses into Claude Code skills. Discovers top professional courses on any topic, extracts video transcripts via Playwright, enriches them into actionable notes, scores skill-worthiness with a 5-criteria rubric, then builds + benchmarks new skills and packages them as plugins. Handles single courses and Professional Certificates. Triggers on English and Vietnamese prompts about finding courses, extracting transcripts, or learning a new skill from Coursera.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Phu Hung",
+    "url": "https://github.com/VinhHung1999"
+  },
+  "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+  "license": "MIT"
+}

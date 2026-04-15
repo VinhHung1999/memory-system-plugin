@@ -4,8 +4,8 @@
     "name": "Phu Hung"
   },
   "metadata": {
-    "description": "Maniax — Claude Code plugins collection. Currently ships: memory-system (4-tier knowledge & memory).",
-    "version": "1.9.3"
+    "description": "Maniax — Claude Code plugins collection. Ships: memory-system (4-tier knowledge & memory), marketing-toolkit (8 marketing skills from Google's Digital Marketing certificate), and learn-coursera (meta-skill for turning Coursera courses into Claude Code skills).",
+    "version": "1.12.0"
   },
   "plugins": [
     {
@@ -20,6 +20,34 @@
       "repository": "https://github.com/VinhHung1999/memory-system-plugin",
       "license": "MIT",
       "keywords": ["memory", "knowledge", "rules", "auto-memory", "workflow"],
+      "category": "productivity"
+    },
+    {
+      "name": "marketing-toolkit",
+      "source": "./plugins/marketing-toolkit",
+      "description": "8 marketing skills distilled from Google's Digital Marketing & E-commerce Professional Certificate: SEO audit, email campaign builder + metrics, social media calendar + listening, A/B test designer, AI prompt engineering (T-C-R-E-I), and GA4+Google Ads unified dashboard. Every skill bundles deterministic Python scripts + reference docs. Average benchmark: 93 percent pass rate vs 48 percent baseline.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Phu Hung"
+      },
+      "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+      "repository": "https://github.com/VinhHung1999/memory-system-plugin",
+      "license": "MIT",
+      "keywords": ["marketing", "seo", "email", "social-media", "a-b-testing", "google-ads", "google-analytics", "prompt-engineering", "dashboard"],
+      "category": "marketing"
+    },
+    {
+      "name": "learn-coursera",
+      "source": "./plugins/learn-coursera",
+      "description": "Meta-skill for turning Coursera courses into Claude Code skills. Discovers top professional courses on any topic, extracts video transcripts via Playwright, enriches them into actionable notes, scores skill-worthiness with a 5-criteria rubric, then builds + benchmarks new skills and packages them as plugins. Handles single courses and Professional Certificates. Triggers on English and Vietnamese prompts.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Phu Hung"
+      },
+      "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+      "repository": "https://github.com/VinhHung1999/memory-system-plugin",
+      "license": "MIT",
+      "keywords": ["coursera", "learning", "course-extraction", "transcript", "skill-builder", "playwright", "education", "meta-skill"],
       "category": "productivity"
     }
   ]

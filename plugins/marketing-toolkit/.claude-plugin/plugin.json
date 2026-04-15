@@ -1,0 +1,11 @@
+{
+  "name": "marketing-toolkit",
+  "description": "8-skill marketing toolkit distilled from Google's Digital Marketing & E-commerce Professional Certificate. Covers on-page SEO audit, email campaign building + metrics analysis, social media content calendar + listening, A/B test design, AI prompt engineering (T-C-R-E-I), and unified performance dashboard (GA4 + Google Ads). Every skill is standalone with deterministic scripts and reference docs.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Phu Hung",
+    "url": "https://github.com/VinhHung1999"
+  },
+  "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+  "license": "MIT"
+}

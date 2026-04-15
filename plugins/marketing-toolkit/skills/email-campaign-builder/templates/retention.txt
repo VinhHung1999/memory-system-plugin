@@ -1,0 +1,14 @@
+{{first_name}}, {{headline_hook}}
+
+{{empathy_statement}}
+
+{{reminder_of_value}}
+
+>>> {{incentive}} — {{incentive_detail}}
+
+{{cta_text}}: {{cta_url}}
+
+Not interested? No hard feelings — unsubscribe: {{unsubscribe_url}}
+
+---
+{{brand_name}} · {{physical_address}}

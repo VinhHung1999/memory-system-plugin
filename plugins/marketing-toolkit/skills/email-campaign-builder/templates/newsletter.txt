@@ -1,0 +1,28 @@
+{{issue_label}}
+{{newsletter_title}}
+
+{{editorial_intro}}
+
+---
+
+🎯 {{section_1_title}}
+{{section_1_body}}
+Read more: {{section_1_url}}
+
+---
+
+📊 {{section_2_title}}
+{{section_2_body}}
+Read more: {{section_2_url}}
+
+---
+
+💡 {{section_3_title}}
+{{section_3_body}}
+Read more: {{section_3_url}}
+
+---
+{{brand_name}} · {{physical_address}}
+Past issues: {{archive_url}}
+Preferences: {{preferences_url}}
+Unsubscribe: {{unsubscribe_url}}
