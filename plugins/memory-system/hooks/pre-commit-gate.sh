@@ -26,9 +26,15 @@ if [ -f "$STATE_FILE" ]; then
   fi
 fi
 
-# Soft reminder — does NOT block
+# Soft reminder — does NOT block. Provides BOTH:
+# - systemMessage: visible to the user
+# - additionalContext: read by Claude so it knows to actually invoke the skill
 cat <<'EOF'
 {
+  "hookSpecificOutput": {
+    "hookEventName": "PreToolUse",
+    "additionalContext": "[Pre-commit check] You are about to run git commit/push. Before proceeding, consider whether this session made significant changes that should be captured via /memory-system:knowledge-updater. If yes: invoke the skill first (it will analyze the diff and update CLAUDE.md, rules, memory, or skills as needed). If nothing significant changed: continue with the commit. Either way, this hook does NOT block the git command."
+  },
   "systemMessage": "💡 Tip: consider /memory-system:knowledge-updater before committing if you made significant changes this session (CLAUDE.md, rules, memory, skills)."
 }
 EOF

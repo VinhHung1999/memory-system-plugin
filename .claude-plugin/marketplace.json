@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Maniax — Claude Code plugins collection. Currently ships: memory-system (4-tier knowledge & memory).",
-    "version": "1.9.1"
+    "version": "1.9.2"
   },
   "plugins": [
     {
