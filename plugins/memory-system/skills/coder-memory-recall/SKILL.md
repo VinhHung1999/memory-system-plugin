@@ -1,144 +1,167 @@
 ---
 name: coder-memory-recall
-description: Retrieve universal coding patterns from ~/.claude/memory/ files. Auto-invokes before complex tasks or when user says "--recall". Searches relevant role directories based on task context. Skip for trivial tasks.
+description: Retrieve universal coding lessons from Hung's brain2 wiki at `wiki/code-knowledge/`. Use before non-trivial tasks (unclear bugs, design choices, unfamiliar domains) or when user says "--recall". Uses qmd for semantic/keyword search, falls back to grep. Skip for trivial tasks — recall is expensive.
 ---
 
 ## MANDATORY: Use Task Tool (Sub-Agent, Background)
 
-**NEVER execute directly in main context!** Use Task tool with:
+**NEVER execute directly in main context.** Use Task tool with:
 - `subagent_type: "general-purpose"`
 - `run_in_background: true`
 
-Running the subagent in background keeps the main conversation flowing while the recall search happens in parallel. You'll be notified when results arrive.
+Background sub-agent lets the search happen in parallel without blocking the main conversation.
 
 ---
 
-## When NOT to Search
+## When to recall (be strict — qmd search is ~2s, don't burn it on trivia)
 
-- Killing processes, starting servers, basic file operations
-- Standard workflows, well-known patterns
-- Simple tasks where basic knowledge suffices
+**Recall when:**
+- Debugging a bug whose cause isn't obvious
+- Making an architecture/library decision
+- Performance tuning, optimization
+- Working in an unfamiliar domain (first time touching blockchain, IAP, ffmpeg, etc.)
+- User explicitly asks to check memory (`--recall`, "do we have notes on X")
 
-**Only search for hard problems** — non-obvious bugs, complex architectures, performance issues, unfamiliar domains.
+**Skip when:**
+- Trivial ops: typos, format, build commands, git status, file listing
+- Question answerable in 30 seconds from general knowledge
+- Short lookups where the answer is in the current repo
 
 ---
 
-## Storage Location (2-level hierarchy)
+## Storage layout (what you're searching)
 
 ```
-~/.claude/memory/
-├── <domain>/                    e.g., frontend-patterns, mobile-patterns
-│   ├── INDEX.md                 top-level overview
-│   ├── bugs/
-│   │   ├── INDEX.md
-│   │   └── <insight>.md
-│   ├── patterns/
-│   ├── decisions/
-│   ├── procedures/
-│   └── structure/
-└── <another-domain>/
+${SECOND_BRAIN_VAULT:-~/Documents/Notes/HungVault/HungVault/brain2}/
+├── wiki/code-knowledge/              # CURATED — primary search target
+│   ├── code-knowledge.md             # top-level folder-note (MOC)
+│   ├── <domain>/                     # frontend, backend, mobile, automation, claude-code, universal
+│   │   ├── <domain>.md               # per-domain MOC
+│   │   ├── bugs/
+│   │   │   └── <insight>.md
+│   │   └── patterns/
+│   │       └── <insight>.md
+└── raw/code-knowledge/               # INBOX — secondary (fresh, unpromoted)
+    └── <domain>/<bugs|patterns>/<insight>.md
 ```
 
-**Level 1 — Domain** (self-discovered): `backend-patterns/`, `frontend-patterns/`, `mobile-patterns/`, `blockchain-patterns/`, `universal-patterns/`, etc.
+**Default: search wiki only.** Only widen to `raw/` if the user explicitly says "check inbox too" or wiki search returns nothing and the query looks recent.
 
-**Level 2 — Category** (fixed set): `bugs/`, `patterns/`, `decisions/`, `procedures/`, `structure/`.
+---
 
-## Smart Search (2-level)
+## Search strategy — prefer qmd, fall back to grep
 
-**Step 1 — List domains**
+qmd is Hung's local search engine over the brain2 collection. Three tools, by cost:
+
+| Tool | Speed | Use for |
+|---|---|---|
+| `qmd search "..."` | ~30 ms | keyword / exact-phrase |
+| `qmd vector_search "..."` | ~2 s | concept / meaning-based (vocabulary may differ from the query) |
+| `qmd deep_search "..."` | ~10 s | hard queries — expands variations, searches each, reranks |
+
+Check availability first:
+
 ```bash
-ls -d ~/.claude/memory/*/
+command -v qmd >/dev/null 2>&1 && qmd status brain2 >/dev/null 2>&1
 ```
 
-**Step 2 — Pick 1-2 relevant domains**
-- Match task keywords/context to domain names + their `INDEX.md` (first 30 lines)
-- Always include `universal-patterns/` if unsure
+If qmd is available, use it. Otherwise fall back to grep.
 
-**Step 3 — Pick relevant CATEGORY within each domain**
+### qmd workflow
 
-Based on task type:
-- Debugging a bug → `bugs/`
-- Looking for best practice → `patterns/`
-- Making architecture decision → `decisions/` + `patterns/`
-- Setting up a workflow → `procedures/`
-- Questioning folder layout → `structure/`
+1. Start with `qmd search` for a concrete keyword (error message, function name, library name).
+2. If zero or low-score results, escalate to `qmd vector_search` for the conceptual version of the query.
+3. Only use `qmd deep_search` when both fail and the task really warrants the cost.
+4. Filter hits to `wiki/code-knowledge/` paths (ignore `raw/notion/`, `raw/code-knowledge/`, `work/`, etc. unless user asks).
+5. Use `qmd get <path>` or `qmd multi_get "wiki/code-knowledge/<domain>/**/*.md"` to read full matches.
 
-**Step 4 — Read category INDEX first**
+### grep fallback
+
 ```bash
-cat ~/.claude/memory/<domain>/<category>/INDEX.md
-```
+VAULT="${SECOND_BRAIN_VAULT:-$HOME/Documents/Notes/HungVault/HungVault/brain2}"
+WIKI_CK="$VAULT/wiki/code-knowledge"
 
-**Step 5 — Grep within scope**
-```bash
-grep -r "keyword" ~/.claude/memory/<domain>/<category>/
-```
+# Start narrow (one domain) if the task is clearly scoped
+grep -r -l "keyword" "$WIKI_CK/<domain>/"
 
-Widen if no hits:
-```bash
-grep -r "keyword" ~/.claude/memory/<domain>/     # whole domain
-grep -r "keyword" ~/.claude/memory/              # all domains
+# Widen to all domains if no hits
+grep -r -l "keyword" "$WIKI_CK/"
+
+# Last resort: include the inbox
+grep -r -l "keyword" "$VAULT/raw/code-knowledge/"
 ```
 
 ---
 
 ## Workflow
 
-### 1. Identify Scope (domain + category)
+### 1. Identify scope
 
-See "Smart Search" above. Narrow to `<domain>/<category>/` before searching.
+Pick 1–2 likely domains from the task context. Keywords → domains:
 
-### 2. Read INDEX files top-down
+| Task mentions | Domain |
+|---|---|
+| React, Next.js, Tailwind, Zustand, browser | `frontend` |
+| API, auth, JWT, Postgres, server | `backend` |
+| React Native, Expo, IAP, Swift, Kotlin | `mobile` |
+| Appium, Playwright, test automation | `automation` |
+| Claude Code, plugin, skill, MCP, hook | `claude-code` |
+| Bash, shell, git, CLI, cross-platform | `universal` |
 
-1. `~/.claude/memory/<domain>/INDEX.md` — overview of categories + highlights
-2. `~/.claude/memory/<domain>/<category>/INDEX.md` — full list of entries
+If genuinely cross-cutting, include `universal/`.
 
-This avoids reading every memory file.
-
-### 3. Search for Keywords
+### 2. Read the domain MOC first
 
 ```bash
-grep -r "keyword1\|keyword2" ~/.claude/memory/<domain>/<category>/
+cat "$WIKI_CK/<domain>/<domain>.md"
 ```
 
-Widen progressively if no hits:
-```bash
-grep -r "keyword" ~/.claude/memory/<domain>/     # whole domain (all categories)
-grep -r "keyword" ~/.claude/memory/              # all domains (last resort)
-```
+The domain folder-note lists the bugs/ and patterns/ entries with one-line summaries. Often this alone answers the query — no need to read individual files.
 
-### 4. Read Relevant Files
+### 3. Search
 
-Read the top 3-5 most relevant memory files found. Look for:
-- Past decisions that constrain current work
-- Failures/bugs in similar areas
+Use qmd per the "Search strategy" section. Aim for 3–5 top hits.
+
+### 4. Read the top matches
+
+Read full content of the top 3–5 files. Look for:
+- Past decisions that constrain the current task
+- Known failures in the same area
 - Patterns/conventions already established
-- Procedural workflows that apply
+- Multi-step procedures that apply
 
-### 5. Present Results
+### 5. Present results
 
-Return concise summary of relevant memories found. Let the main Claude instance decide what to use — don't force-fit patterns.
+Return a concise summary (under 200 words) to the main conversation. Include:
+- Title + path of each relevant memory
+- One-line takeaway per memory
+- Your judgment on relevance (is this a direct fit, adjacent context, or loosely related)
 
----
-
-## Decision Criteria: Recall or Skip?
-
-**Recall when:**
-- Non-obvious bug or complex architecture decision
-- Performance optimization
-- Unfamiliar domain where prior patterns could help
-- User explicitly asks to check memory
-
-**Skip when:**
-- Fixing a typo
-- Running a build command
-- Simple tasks with well-known answers
-- Trivial file operations
+**Don't force-fit patterns** — if nothing is relevant, say so. Missing knowledge is a signal to store a new insight once the task is done.
 
 ---
 
-## If No Results Found
+## If no results found
 
-1. Try broader keywords
-2. Search `universal-patterns/` if not already searched
-3. Search ALL directories as last resort
-4. Report "No relevant memories found" — this is fine, not every task has prior learnings
+1. Broaden keywords (try synonyms, drop qualifiers)
+2. Switch to `qmd vector_search` if you only used `qmd search`
+3. Search `universal/` if you only searched a specific domain
+4. Include `raw/code-knowledge/` (fresh inbox)
+5. Report "No relevant memories found" — not every task has prior learnings, and that's fine.
+
+---
+
+## Output format
+
+```
+## Recall for: "<task summary>"
+
+Searched: qmd vector_search "<query>" in wiki/code-knowledge/<domain>/
+
+Top matches:
+1. **<title>** (<path>)
+   <one-line takeaway>
+2. ...
+
+Relevance: <direct fit | adjacent | loose>. <optional one-line of judgment on how it applies>.
+```

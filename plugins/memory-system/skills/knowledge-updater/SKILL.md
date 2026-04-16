@@ -13,7 +13,7 @@ After significant code changes, knowledge gets stale — CLAUDE.md may reference
 |-------|----------|-------------|---------|
 | **CLAUDE.md** | `./CLAUDE.md` or `./.claude/CLAUDE.md` | Project-wide conventions change | New build command, project restructure, new git workflow |
 | **Rules** | `./.claude/rules/*.md` | Domain-specific standards change | New API pattern for BE, new component convention for FE |
-| **Memory** | `~/.claude/memory/<domain>/` | Non-obvious lesson learned | Surprising bug, debugging technique, architecture insight |
+| **Memory** | _(managed by `/memory-system:coder-memory-store`)_ | Non-obvious lesson learned | Surprising bug, debugging technique, architecture insight |
 | **Skills** | `./.claude/skills/` | Workflow or procedure changes | Deploy process changed, new testing workflow |
 
 **Decision tree:**
@@ -26,7 +26,7 @@ Is this specific to a file type or directory?
   → YES → .claude/rules/ with paths: frontmatter
 
 Is this a hard-won lesson or non-obvious pattern?
-  → YES (universal) → ~/.claude/memory/ via /memory-system:coder-memory-store
+  → YES (universal) → delegate to /memory-system:coder-memory-store (it owns the path)
   → YES (project-specific) → auto memory handles it automatically
 
 Is this a changed workflow or procedure?
@@ -74,9 +74,9 @@ For each significant change, determine:
 - For adding a single new rule to an existing setup, create one with appropriate `paths:` frontmatter
 
 **For memory updates:**
-- Use skill `/memory-system:coder-memory-store` for universal patterns (cross-project)
+- Use skill `/memory-system:coder-memory-store` for universal patterns (cross-project) — it owns the path and staging logic
 - Project-specific learnings are handled by built-in auto memory (automatic, no action needed)
-- The skill auto-picks or creates the right domain folder — no manual routing needed
+- Don't hard-code paths here; delegation keeps this skill stable across memory-system changes
 
 **For skills updates:**
 - Identify which skill's workflow changed
@@ -84,7 +84,7 @@ For each significant change, determine:
 
 ### 4. Memory Domain Routing
 
-Delegate to `/memory-system:coder-memory-store` — it auto-discovers folders by scanning `~/.claude/memory/` and matches content to existing folder names/INDEX.md. It creates new folders only when a genuinely new domain appears, falling back to `universal-patterns/` for one-off insights.
+Delegate to `/memory-system:coder-memory-store`. That skill owns domain selection, path layout, and duplicate checking. This skill should not need to know where memory files live.
 
 ### 5. Report
 
@@ -92,7 +92,7 @@ After making updates, report in 1-2 lines:
 
 ```
 Updated: .claude/rules/backend.md (added new validation pattern for API endpoints)
-Updated: ~/.claude/memory/debugging/ via /memory-system:coder-memory-store (SSE connection timeout workaround)
+Updated memory via /memory-system:coder-memory-store (SSE connection timeout workaround)
 ```
 
 ### 6. Mark as Ran (unblock git commit/push)

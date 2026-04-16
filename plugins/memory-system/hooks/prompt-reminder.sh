@@ -1,57 +1,32 @@
 #!/usr/bin/env bash
-# UserPromptSubmit hook — inject a short memory-first reminder on every user prompt.
-# Purpose: combat attention decay in long sessions. Fires at task-start moments,
-# not on every tool call (unlike the deprecated PreToolUse Read hook).
+# UserPromptSubmit hook — ultra-light pointer to wiki memory.
+# Fires on every prompt but stays under 30 words to minimize context noise.
 
 set -e
 
-MEMORY_DIR="$HOME/.claude/memory"
+VAULT="${SECOND_BRAIN_VAULT:-$HOME/Documents/Notes/HungVault/HungVault/brain2}"
+WIKI_CK="$VAULT/wiki/code-knowledge"
 
-# Bail silently if memory dir doesn't exist
-[ ! -d "$MEMORY_DIR" ] && exit 0
+# Bail silently if vault missing
+if [ ! -d "$WIKI_CK" ]; then
+  echo '{}'
+  exit 0
+fi
 
-# Read stdin (we don't need its fields, just consume it)
-cat > /dev/null
+cat > /dev/null  # consume stdin
 
-# ANSI color codes for visible systemMessage
-C_RESET=$'\033[0m'
-C_DIM=$'\033[2m'
-C_CYAN=$'\033[36m'
+WIKI_SHORT="${WIKI_CK/#$HOME/~}"
 
-# List domain folder names (no counts, no contents — keep it light)
-DOMAINS=""
-DOMAIN_COUNT=0
-for dir in "$MEMORY_DIR"/*/; do
-  [ -d "$dir" ] || continue
-  name=$(basename "$dir")
-  DOMAINS="${DOMAINS}${name}, "
-  DOMAIN_COUNT=$((DOMAIN_COUNT + 1))
-done
-DOMAINS="${DOMAINS%, }"
+REMINDER="Wiki: ${WIKI_SHORT}/. Use /memory-system:coder-memory-recall only if task is non-trivial (unclear bug, design choice, unfamiliar domain). Skip for trivial ops (typo, build, lookup)."
 
-# Nothing to show if no domains yet
-[ -z "$DOMAINS" ] && exit 0
-
-REMINDER="[Memory check] Before starting this task, consider whether universal memory has relevant past lessons.
-
-Available domains: ${DOMAINS}
-
-If the task touches any of these, scan the relevant ~/.claude/memory/<domain>/<category>/INDEX.md first, or use skill /memory-system:coder-memory-recall for keyword search. This prevents reinventing solutions already documented."
-
-# Short visible message for the user so they know the hook ran
-SYSTEM_MSG="${C_DIM}🧠 ${C_CYAN}memory reminder${C_RESET}${C_DIM} injected (${DOMAIN_COUNT} domains available)${C_RESET}"
-
-# JSON-escape via python
 ESCAPE() { python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))' <<< "$1"; }
 CONTEXT_JSON=$(ESCAPE "$REMINDER")
-SYSTEM_JSON=$(ESCAPE "$SYSTEM_MSG")
 
 cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "UserPromptSubmit",
     "additionalContext": $CONTEXT_JSON
-  },
-  "systemMessage": $SYSTEM_JSON
+  }
 }
 EOF

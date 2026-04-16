@@ -2,12 +2,13 @@
   "autoMemoryEnabled": true,
   "permissions": {
     "allow": [
-      "Write(~/.claude/memory/**)",
-      "Edit(~/.claude/memory/**)",
-      "Read(~/.claude/memory/**)",
-      "Bash(mkdir -p ~/.claude/memory/**)",
-      "Bash(ls ~/.claude/memory/**)",
-      "Bash(grep * ~/.claude/memory/**)"
+      "Write(~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Edit(~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Read(~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Bash(mkdir -p ~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Bash(ls ~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Bash(grep:*)",
+      "Bash(qmd:*)"
     ]
   }
 }

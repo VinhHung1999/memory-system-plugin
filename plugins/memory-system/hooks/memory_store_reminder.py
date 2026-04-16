@@ -10,9 +10,9 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 # Configuration
-REMIND_EVERY_N_STOPS = 3  # Fire reminder every Nth stop
-MIN_TOOL_CALLS = 5  # Minimum tool calls since last reminder (substantial work)
-COOLDOWN_MINUTES = 5  # Don't fire more than once per N minutes
+REMIND_EVERY_N_STOPS = 6  # Fire reminder every Nth stop
+MIN_TOOL_CALLS = 10  # Minimum tool calls since last reminder (substantial work)
+COOLDOWN_MINUTES = 15  # Don't fire more than once per N minutes
 STATE_FILE = Path.home() / ".claude" / "memory_store_hook_state.json"
 
 
@@ -141,7 +141,7 @@ def main():
             # Block Claude from stopping and provide the reminder
             output = {
                 "decision": "block",
-                "reason": "Check the last few turns for hard-earned universal lessons worth storing (cross-project). Use skill /memory-system:coder-memory-store — it auto-picks or creates the right domain folder in ~/.claude/memory/. Project-specific learnings are handled by built-in auto memory (not this skill). Be selective — only store non-obvious bugs, surprising failures, or patterns you struggled with. If storing: store and report in 1 line. If not: say 'Nothing worth storing.' and move on. NO explanations or analysis."
+                "reason": "Check recent turns for hard-won universal lessons (non-obvious bugs, surprising patterns, cross-project failures worth remembering). Use /memory-system:coder-memory-store — it stages to brain2/raw/code-knowledge/<domain>/<bugs|patterns>/ as inbox. Hung promotes to wiki/ manually later, so don't overthink classification. Be selective — skip anything Google-able or project-specific. If storing: 1 line report. If not: say 'Nothing worth storing.' NO analysis."
             }
             print(json.dumps(output))
             sys.exit(0)

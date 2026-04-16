@@ -1,297 +1,194 @@
 ---
 name: coder-memory-store
-description: Store universal coding patterns into ~/.claude/memory/ files. Auto-invokes after difficult tasks with broadly-applicable lessons. Trigger with "--store" or when user expresses frustration (strong learning signals). Skip for trivial or project-specific patterns (use project-memory-store for those).
+description: Stage universal coding lessons into Hung's brain2 wiki inbox at `raw/code-knowledge/`. Auto-invokes after difficult tasks with broadly-applicable insights (non-obvious bugs, surprising patterns, hard-won fixes). Trigger with "--store" or when user expresses frustration. Skip for trivial or project-specific patterns (built-in auto memory handles those).
 ---
 
 ## MANDATORY: Use Task Tool (Sub-Agent, Background)
 
-**NEVER execute directly in main context!** Use Task tool with:
+**NEVER execute directly in main context.** Use Task tool with:
 - `subagent_type: "general-purpose"`
 - `run_in_background: true`
 
-Running the subagent in background keeps the main conversation flowing — you don't block on memory writes. You'll be notified when it completes, and can continue the current task immediately.
+Background sub-agent keeps the main conversation flowing while the write happens. You'll be notified when it completes.
 
-**Permissions**: The plugin pre-grants Write/Edit/Read/Bash access to `~/.claude/memory/**` so the subagent can write without permission prompts. If errors appear, check `settings.json` `permissions.allow` has the required patterns.
+**Permissions**: The plugin pre-grants Write/Edit/Read/Bash on the vault path. If you see a permission error, check `settings.json` under `permissions.allow`.
+
+---
+
+## Core principle — inbox, not archive
+
+This skill **stages** insights into a staging inbox. It does **NOT** file them into the curated wiki. Hung promotes raw inbox items into `wiki/code-knowledge/` manually when he has time to review them.
+
+**You write to:** `${SECOND_BRAIN_VAULT:-~/Documents/Notes/HungVault/HungVault/brain2}/raw/code-knowledge/<domain>/<bugs|patterns>/<filename>.md`
+
+**You never touch:** `wiki/code-knowledge/` — that's Hung's curated space.
+
+Because the raw inbox is staging, don't over-engineer the write:
+- Don't rebuild INDEX.md files
+- Don't merge/dedupe against the wiki
+- Don't agonize over domain classification — if unsure, default to `universal/` and let Hung reclassify during promotion
 
 ---
 
 ## When NOT to Store
 
-- Simple commands, basic operations, well-documented patterns
-- Project-specific patterns (use project-memory-store instead)
-- Anything Google-able in 30 seconds
+Skip if any of the following is true:
+- **Trivial** — typo fix, format cleanup, simple build command
+- **Google-able in 30 seconds** — basic language syntax, well-documented library usage
+- **Project-specific** — specific API endpoint names, private business logic, session-bound state (built-in auto memory handles these)
+- **Already written** — if grep finds similar wording in `raw/code-knowledge/` or `wiki/code-knowledge/`, skip or merge rather than duplicate
 
-**Only store hard-won lessons** — non-obvious bugs, surprising patterns, failures, universal insights.
+Only store hard-won lessons: non-obvious bugs, surprising patterns, cross-project failures, fixes that took real debugging.
 
 ---
 
-## Storage Location (2-level hierarchy)
-
-All memories go to `~/.claude/memory/` with **domain → category → file** structure:
+## Storage layout
 
 ```
-~/.claude/memory/
-├── <domain>/                    e.g., frontend-patterns, mobile-patterns
-│   ├── INDEX.md                 top-level index (lists categories + highlights)
+${SECOND_BRAIN_VAULT}/raw/code-knowledge/
+├── <domain>/                   e.g., frontend, backend, mobile, automation, claude-code, universal
 │   ├── bugs/
-│   │   ├── INDEX.md             category index
-│   │   └── <insight>.md         actual memory file
-│   ├── patterns/
-│   │   ├── INDEX.md
-│   │   └── <insight>.md
-│   ├── decisions/
-│   │   ├── INDEX.md
-│   │   └── <insight>.md
-│   ├── procedures/
-│   │   ├── INDEX.md
-│   │   └── <insight>.md
-│   └── structure/               optional — project layout, organization
-│       ├── INDEX.md
-│       └── <insight>.md
-└── <another-domain>/
-    └── ...
+│   │   └── <insight>.md        a specific failure + fix
+│   └── patterns/
+│       └── <insight>.md        a recurring best practice, decision, or pattern
 ```
 
-### Level 1 — Domain (self-discovered)
+**Only two subfolders per domain: `bugs/` and `patterns/`.** Finer classification (`decision` vs `pattern` vs `lesson` vs `structure` vs `library`) goes in the `category:` frontmatter field, not a folder. This keeps the inbox shallow so Hung can promote quickly.
 
-Topics emerge organically: `backend-patterns/`, `frontend-patterns/`, `mobile-patterns/`, `blockchain-patterns/`, `claude-code-patterns/`, `universal-patterns/`, etc. Users can have any domain.
+**Picking the domain:**
 
-### Level 2 — Category (default set + extensible)
-
-**Default categories** (prefer these; fits most insights):
-
-| Category | What goes here | Example |
-|---|---|---|
-| `bugs/` | Bugs, errors, workarounds, fixes | "useCallback stale closure fix" |
-| `patterns/` | Recurring best practices, idioms | "Exponential backoff with jitter" |
-| `decisions/` | Architecture choices, tradeoffs | "Zustand over Redux for this use case" |
-| `procedures/` | Step-by-step how-tos, workflows | "Setup Prisma + PostgreSQL" |
-| `structure/` | Folder/project organization | "Monorepo layout for apps + packages" |
-
-**Extending — create new category when needed**
-
-If an insight genuinely doesn't fit the 5 defaults, create a new sub-category. Examples:
-- `animations/` inside `frontend-patterns/` — specialized topic deserving its own bucket
-- `performance/` inside `backend-patterns/` — if you accumulate enough perf insights
-- `integrations/` inside `mobile-patterns/` — third-party SDK integrations
-
-**Rules for new categories:**
-- Use kebab-case, descriptive, singular or plural consistently
-- Don't create for 1 insight — try fitting into a default first
-- Promote to new category when you have 2-3 related insights that feel cramped in a default
-
-Create the category folder and its INDEX.md when the first insight of that type arrives. Don't pre-create empty ones.
-
-## Folder Routing (Smart Auto-Discovery)
-
-**Step 1 — Pick the DOMAIN (level 1)**
-```bash
-ls -d ~/.claude/memory/*/
-```
-- Match task content to an existing domain folder (prefer reuse)
-- If no match but clear domain → create new domain folder
-- If genuinely cross-cutting → use `universal-patterns/`
-
-**Step 2 — Pick the CATEGORY (level 2)**
-
-First, list existing categories in the chosen domain:
-```bash
-ls -d ~/.claude/memory/<domain>/*/
-```
-
-**Match an existing category if possible** (reuse over create).
-
-Otherwise classify into a default:
-- Bug/error/workaround → `bugs/`
-- Recurring best practice → `patterns/`
-- Architecture decision with tradeoffs → `decisions/`
-- Step-by-step workflow → `procedures/`
-- Project/folder organization → `structure/`
-
-**If none of the 5 defaults fits** (insight is a specialized topic): create a new sub-category (kebab-case), e.g., `animations/`, `performance/`, `integrations/`.
-
-### Tie-breaker when ambiguous
-
-When an insight fits multiple categories, pick the **most specific** in this priority order:
-
-1. `bugs/` — if it's a fix for a specific error/failure
-2. `decisions/` — if the focus is choosing X over Y with tradeoffs
-3. `procedures/` — if it's a multi-step how-to
-4. `structure/` — if it's about folder/project organization
-5. `patterns/` — default catch-all for "this is how to do X well"
-
-Example: "Use debounce 300ms for autocomplete (tested 100/300/500ms)"
-- Has a specific choice with tradeoffs → `decisions/`
-- Also a general pattern → would go to `patterns/`
-- Tie-breaker says `decisions/` wins (#2 beats #5)
-
-**Step 3 — Create path and write**
-
-Full path: `~/.claude/memory/<domain>/<category>/<filename>.md`
-
-Create `<category>/` subfolder and its `INDEX.md` if missing.
-
-### Naming rules
-
-- Domains: kebab-case, meaningful (`blockchain-patterns`, `game-dev`)
-- Files: kebab-case, descriptive (`usecallback-stale-closure.md`)
-
-### Default behavior
-
-- **Prefer creating new domain folder** over dumping into `universal-patterns/`
-- **Prefer creating new category subfolder** over skipping level 2
-- `universal-patterns/` still has the same 2-level structure (bugs/, patterns/, decisions/, procedures/)
-
-### Flat vs 2-level threshold
-
-To avoid over-engineering small domains:
-
-| Domain file count | Structure |
+| Content | Domain |
 |---|---|
-| **≤ 3 total files** | Flat — save directly to `<domain>/<filename>.md` |
-| **> 3 total files** | Use 2-level — save to `<domain>/<category>/<filename>.md` |
+| React / Next.js / Zustand / browser / DOM | `frontend` |
+| Node / Python / DB / auth / API server | `backend` |
+| React Native / Expo / Swift / Kotlin / IAP | `mobile` |
+| QA / Appium / Playwright / test automation / Selenium | `automation` |
+| Claude Code plugins / skills / MCP / hooks | `claude-code` |
+| Bash / git / shell / cross-platform tooling | `universal` |
 
-**When crossing the threshold (4th file arrives)**: the skill should migrate existing flat files into sub-categories first. Suggest running `/memory-system:reorganize` for the domain, or do it inline if the migration is trivial (3-4 files).
-
-This keeps small domains (e.g., `pm-patterns/` with 1 file) simple, and organizes large domains (e.g., `mobile-patterns/` with 13 files) clearly.
+If nothing fits cleanly → `universal/` and let Hung reclassify.
 
 ---
 
 ## Workflow
 
-### 1. Extract Insights
+### 1. Extract insights
 
-Analyze conversation for **0-3 insights** (usually 0-1).
+Analyze the recent conversation for 0–3 insights (usually 0–1).
 
-**Criteria (ALL must be true):**
-- **Non-obvious**: Not standard practice → "useCallback without deps causes stale closures"
-- **Universal**: Applies beyond one project → "Exponential backoff with jitter prevents thundering herd"
-- **Actionable**: Concrete guidance → "Use debouncing (300ms) for autocomplete inputs"
-- **Valuable**: Helps future similar situations
+**ALL must be true:**
+- **Non-obvious** — not standard practice (e.g., `useCallback` stale-closure trap)
+- **Universal** — applies beyond one project (e.g., exponential backoff with jitter)
+- **Actionable** — concrete guidance, not vague ("be careful with X")
+- **Valuable** — would save future-Hung real debugging time
 
-### 2. Check for Duplicates
+### 2. Check for duplicates
 
-Search both domain and category:
 ```bash
-grep -r "keyword" ~/.claude/memory/<domain>/<category>/
-grep -r "keyword" ~/.claude/memory/<domain>/   # fallback, whole domain
+VAULT="${SECOND_BRAIN_VAULT:-$HOME/Documents/Notes/HungVault/HungVault/brain2}"
+grep -r -l "keyword" "$VAULT/raw/code-knowledge/<domain>/" 2>/dev/null
+grep -r -l "keyword" "$VAULT/wiki/code-knowledge/<domain>/" 2>/dev/null
 ```
 
-Read `INDEX.md` files along the way:
-- `~/.claude/memory/<domain>/INDEX.md` (overview)
-- `~/.claude/memory/<domain>/<category>/INDEX.md` (detailed)
+- **Near-duplicate in raw** → merge into existing inbox file
+- **Near-duplicate in wiki** → skip entirely (Hung already curated it)
+- **Related but distinct** → new file, link the related one in the Related section
+- **Novel** → create new file
 
-- **Duplicate** → MERGE into existing file
-- **Related** → UPDATE existing file with new info
-- **New** → CREATE new file in `<domain>/<category>/`
+### 3. Write file
 
-### 3. Write Memory File
+Path: `${SECOND_BRAIN_VAULT}/raw/code-knowledge/<domain>/<bugs|patterns>/<slug>.md`
 
-**Filename**: `<short-descriptive-name>.md` (lowercase, hyphens)
+Filename slug: kebab-case, descriptive (`usecallback-stale-closure.md`, `sse-crlf-lf-parsing.md`).
 
-**Format**:
+**Frontmatter schema (match the wiki's B++ convention):**
+
+```yaml
+---
+type: source | entity | concept | synthesis
+category: pattern | decision | lesson | structure | library | bug
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+aliases:
+  - Display Name
+tags: [domain, topic1, topic2]
+status: inbox
+---
+```
+
+- `type:` — usually `concept` for patterns, `synthesis` for multi-source lessons
+- `category:` — finer-grain than folder; `bug` for `bugs/` files, one of the others for `patterns/` files
+- `status: inbox` — marks this as unpromoted (Hung greps this when curating)
+
+**Body:**
+
 ```markdown
 # <Title>
 
-**Type:** Episodic | Procedural | Semantic
-**Tags:** #tag1 #tag2 #success or #failure
-**Created:** YYYY-MM-DD
-
----
-
 ## Description
-One sentence summary.
+One-sentence summary of the lesson.
 
 ## Content
-3-5 sentences: what happened, what was tried, what worked/failed, key lesson.
+3–5 sentences: what happened, what was tried, what worked/failed, the key lesson. Be specific — include error messages, tool versions, or file paths if they matter.
 
 ## Related
-Links to related memories if any.
+- Links to related wiki pages or prior inbox files (bare wikilinks: `[[page-slug]]`).
 ```
 
-### 4. Update INDEX.md at BOTH levels
+### 4. Sync qmd index (if available)
 
-**Level 2 (category INDEX)** — `~/.claude/memory/<domain>/<category>/INDEX.md`
-
-Append:
-```markdown
-- [Title](filename.md) — one-line summary
+```bash
+qmd update brain2 >/dev/null 2>&1 || true
 ```
 
-Create if missing, with header:
-```markdown
-# <Category> — <Domain>
+Silent — don't fail the write if qmd isn't installed.
 
-## Entries
-- [Title](filename.md) — one-line summary
-```
+### 5. Report
 
-**Level 1 (domain INDEX)** — `~/.claude/memory/<domain>/INDEX.md`
-
-Keep it as an overview. Format:
-```markdown
-# <Domain>
-
-## Categories
-
-| Category | Count | Description |
-|---|---|---|
-| [bugs/](bugs/INDEX.md) | N | Bug fixes and workarounds |
-| [patterns/](patterns/INDEX.md) | N | Recurring best practices |
-| [decisions/](decisions/INDEX.md) | N | Architecture choices |
-| [procedures/](procedures/INDEX.md) | N | Step-by-step workflows |
-| [structure/](structure/INDEX.md) | N | Project organization |
-
-## Highlights
-- [Most important entry 1](category/file.md)
-- [Most important entry 2](category/file.md)
-```
-
-Update the count column when adding new entries. Only list highlights (top 3-5 most referenced) — full lists live in category INDEX.md.
+One line back to the main conversation: `Stored to raw/code-knowledge/<domain>/<bugs|patterns>/<filename>.md`. Nothing more.
 
 ---
 
-## Handling Conflicts
+## Frustration = strong signal
 
-| Situation | Action |
-|-----------|--------|
-| Near-identical memory exists | **MERGE** — combine best parts into one file |
-| Related memory exists | **UPDATE** — add "Updated YYYY-MM-DD:" section |
-| 2+ episodic show a common pattern | **GENERALIZE** — create semantic memory linking to them |
-| Contradicts old memory | **UPDATE** — add "Previous approach:" to show evolution |
-
----
-
-## Frustration = Strong Learning Signal
-
-When user expresses frustration (fuck, shit, wtf, stupid, etc.), this is a **critical learning moment**:
-1. Store with full failure context
-2. Tag with `#failure` and `#strong-signal`
-3. Prioritize over routine successes
+When Hung expresses frustration (fuck, shit, wtf, "không hiểu sao", "why is this broken"), that's a critical learning moment:
+1. Store with full failure context (error, what was tried, what fixed it)
+2. Add `#failure #strong-signal` to `tags:`
+3. Prioritize the write even if you'd otherwise skip
 
 ---
 
 ## Examples
 
-**Good** (backend-patterns/rate-limit-thundering-herd.md):
+**Good — backend/bugs/jose-jwt-jti.md:**
+
 ```markdown
-# API Rate Limiting: Thundering Herd
-
-**Type:** Semantic
-**Tags:** #backend #api #rate-limiting #failure #success
-**Created:** 2026-02-06
-
+---
+type: concept
+category: bug
+created: 2026-04-16
+updated: 2026-04-16
+aliases:
+  - JOSE JWT jti
+tags: [backend, auth, jwt, bug]
+status: inbox
 ---
 
+# JOSE JWT: same iat + same payload = identical tokens
+
 ## Description
-Simple retry logic causes thundering herd; use exponential backoff with jitter.
+JOSE `SignJWT` with identical payloads and same-second `iat` produces byte-identical tokens, breaking revocation by token.
 
 ## Content
-When implementing rate limiting, fixed-delay retries cause all clients to retry simultaneously, overwhelming the server. Solution: exponential backoff (2^n seconds) with random jitter (±30%). This spreads retry attempts and prevents cascading failures. Key lesson: distributed systems need randomness to avoid synchronization disasters.
+Signed two tokens in the same process tick with same claims — got duplicate strings, which broke our "revoke by token string" logic. Spec-compliant but surprising. Fix: always set `jti: randomUUID()` so tokens are unique even with identical payload + iat.
+
+## Related
+- [[axios-zustand-auth-pattern]]
 ```
 
-**Bad** (too vague):
+**Bad — too vague:**
+
 ```markdown
-# Fixed API Bug
-Fixed a rate limiting bug. It works now.
+# Fixed JWT bug
+JWT was broken. Added jti.
 ```

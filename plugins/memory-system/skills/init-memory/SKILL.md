@@ -17,7 +17,7 @@ Initialize structured memory for a project. Auto memory will write to `.claude/m
 | Scope | Mechanism | Location | How |
 |-------|-----------|----------|-----|
 | **Project-specific** | Built-in auto memory | `.claude/memory/` (in project) | Automatic — Claude learns as you work |
-| **Universal** | Skill `/memory-system:coder-memory-store` | `~/.claude/memory/<domain>/` | Manual or via stop hook (33%) |
+| **Universal** | Skill `/memory-system:coder-memory-store` | _(managed by that skill — stages to Hung's brain2 vault)_ | Manual or via Stop hook (every 6th stop) |
 
 ---
 
@@ -110,7 +110,7 @@ Write to `.claude/memory/MEMORY.md`:
 ## How This Works
 
 Auto memory writes here automatically as Claude learns project patterns.
-Universal patterns go to ~/.claude/memory/ via /memory-system:coder-memory-store.
+Universal (cross-project) patterns: use /memory-system:coder-memory-store.
 ```
 
 ### 3b. Topic Folders (REQUIRED — each needs INDEX.md)
@@ -161,7 +161,7 @@ Append:
 ## Project Memory
 
 - Project memory is in `.claude/memory/` — auto memory writes here automatically
-- Universal patterns: `/memory-system:coder-memory-store` → `~/.claude/memory/`
+- Universal patterns: `/memory-system:coder-memory-store` (cross-project)
 - Update knowledge after big changes: `/memory-system:knowledge-updater`
 ```
 
