@@ -1,14 +1,14 @@
 ---
 name: init-memory
-description: Initialize project memory system. Creates .claude/memory/ with topic folders
+description: Initialize project memory system. Creates docs/memory/ with topic folders
   and configures auto memory to store there. Use when starting a new project, user says
-  "init-memory" or "setup memory", or .claude/memory/ does not exist. For rules, use
+  "init-memory" or "setup memory", or docs/memory/ does not exist. For rules, use
   /generate-rules instead.
 ---
 
 # Init Memory
 
-Initialize structured memory for a project. Auto memory will write to `.claude/memory/` inside the project.
+Initialize structured memory for a project. Auto memory will write to `docs/memory/` inside the project.
 
 **For rules** → use `/memory-system:generate-rules` (separate skill)
 
@@ -16,14 +16,14 @@ Initialize structured memory for a project. Auto memory will write to `.claude/m
 
 | Scope | Mechanism | Location | How |
 |-------|-----------|----------|-----|
-| **Project-specific** | Built-in auto memory | `.claude/memory/` (in project) | Automatic — Claude learns as you work |
+| **Project-specific** | Built-in auto memory | `docs/memory/` (in project) | Automatic — Claude learns as you work |
 | **Universal** | Skill `/memory-system:coder-memory-store` | _(managed by that skill — stages to Hung's brain2 vault)_ | Manual or via Stop hook (every 6th stop) |
 
 ---
 
 ## Pre-Flight Checks
 
-1. Check if `.claude/memory/` exists in the project root
+1. Check if `docs/memory/` exists in the project root
 2. If exists → Report what's there, offer to add missing topics. Stop.
 3. If not → Full setup.
 
@@ -94,7 +94,7 @@ Create these? (or suggest changes)
 
 ### 3a. MEMORY.md (entrypoint — REQUIRED)
 
-Write to `.claude/memory/MEMORY.md`:
+Write to `docs/memory/MEMORY.md`:
 
 ```markdown
 # {Project Name} — Project Memory
@@ -116,7 +116,7 @@ Universal (cross-project) patterns: use /memory-system:coder-memory-store.
 ### 3b. Topic Folders (REQUIRED — each needs INDEX.md)
 
 For each topic:
-1. Create directory: `.claude/memory/{topic}/`
+1. Create directory: `docs/memory/{topic}/`
 2. Create **INDEX.md** (not README.md — be consistent with universal memory):
 
    ```markdown
@@ -135,18 +135,18 @@ For each topic:
 
 ## Phase 4 — Configure Auto Memory
 
-Set `autoMemoryDirectory` in project local settings so built-in auto memory writes to `.claude/memory/`:
+Set `autoMemoryDirectory` in project local settings so built-in auto memory writes to `docs/memory/`:
 
 Write or update `.claude/settings.local.json`:
 
 ```json
 {
-  "autoMemoryDirectory": ".claude/memory",
+  "autoMemoryDirectory": "docs/memory",
   "autoMemoryEnabled": true
 }
 ```
 
-This redirects auto memory from `~/.claude/projects/<project>/memory/` to the project's `.claude/memory/` folder.
+This redirects auto memory from `~/.claude/projects/<project>/memory/` to the project's `docs/memory/` folder.
 
 ---
 
@@ -160,7 +160,7 @@ Append:
 
 ## Project Memory
 
-- Project memory is in `.claude/memory/` — auto memory writes here automatically
+- Project memory is in `docs/memory/` — auto memory writes here automatically
 - Universal patterns: `/memory-system:coder-memory-store` (cross-project)
 - Update knowledge after big changes: `/memory-system:knowledge-updater`
 ```
@@ -173,16 +173,16 @@ Append:
 Memory initialized for {project_name}!
 
 Created:
-  .claude/memory/MEMORY.md
-  .claude/memory/bugs-and-lessons/README.md
-  .claude/memory/{topic}/README.md
+  docs/memory/MEMORY.md
+  docs/memory/bugs-and-lessons/README.md
+  docs/memory/{topic}/README.md
   ...
 
 Config:
-  autoMemoryDirectory → .claude/memory/
+  autoMemoryDirectory → docs/memory/
   autoMemoryEnabled → true
 
-Auto memory will now write project learnings to .claude/memory/.
+Auto memory will now write project learnings to docs/memory/.
 Universal patterns: use /memory-system:coder-memory-store manually.
 For project rules: use /memory-system:generate-rules.
 ```
