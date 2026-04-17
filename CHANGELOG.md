@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [memory-system 1.10.4 / second-brain 1.0.1] — 2026-04-17
+
+### Changed
+- **Date-bucketed `raw/` inbox** across both plugins.
+  - `memory-system`: `coder-memory-store` now writes to `brain2/raw/<YYYY-MM-DD>/code-knowledge/<domain>/<bugs|patterns>/<slug>.md` instead of `brain2/raw/code-knowledge/...`. `coder-memory-recall` grep paths widened to `raw/*/code-knowledge/` so it finds files regardless of which day they were staged. Storage-layout diagrams, skill descriptions, hook context messages (`inject.sh`), and `memory_store_reminder.py` reason string all updated to reflect the new path.
+  - `second-brain`: `ingest` workflow now stashes raw sources under `brain2/raw/<today>/...` using `date +%F`. Conversational ingest goes to `brain2/raw/<YYYY-MM-DD>/conversations/<topic>.md`. `raw/assets/`, `raw/notion/`, and `raw/clippings/` remain flat (user-managed). Layout diagrams in `references/conventions.md` and `assets/CLAUDE.md.template` updated.
+- Rationale: daily ingests group together so Hung can scan a single "inbox of 2026-04-17" at promotion time instead of one giant flat folder.
+
+### Migration
+- Existing files under `brain2/raw/code-knowledge/` should be moved into a `raw/<date>/code-knowledge/` folder matching each file's `created:` frontmatter. New writes always use today's bucket.
+
+[memory-system 1.10.4 / second-brain 1.0.1]: https://github.com/VinhHung1999/memory-system-plugin/releases/tag/memory-system-v1.10.4
+
 ## [1.5.0] — 2026-04-14
 
 ### Added

@@ -12,8 +12,10 @@ brain2/
 ├── CLAUDE.md              # this file — conventions for the vault
 ├── log.md                 # chronological activity log (append-only)
 ├── raw/                   # immutable source documents — never edit
-│   ├── assets/            # images
-│   └── notion/            # Notion exports preserved with their hash IDs
+│   ├── <YYYY-MM-DD>/      # ingest-day bucket — new LLM-written sources here
+│   ├── assets/            # images (user-managed, flat, not date-bucketed)
+│   ├── notion/            # Notion exports preserved with hash IDs (flat)
+│   └── clippings/         # web clippings (flat, user-managed)
 └── wiki/                  # LLM-curated knowledge — the compounding artifact
     ├── wiki.md            # vault router (folder-note)
     ├── overview.md        # identity — "who is Hung"

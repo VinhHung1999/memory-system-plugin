@@ -12,8 +12,10 @@ brain2/
 ├── CLAUDE.md              # in-vault schema (mirror of this file)
 ├── log.md                 # chronological activity log (append-only)
 ├── raw/                   # immutable source documents — never edit
-│   ├── assets/            # images
-│   └── notion/            # Notion exports (preserved with hash IDs)
+│   ├── <YYYY-MM-DD>/      # ingest-day bucket — new sources land here per day
+│   ├── assets/            # images (user-managed, not date-bucketed)
+│   ├── notion/            # Notion exports (preserved with hash IDs, flat)
+│   └── clippings/         # web clippings (flat, user-managed)
 └── wiki/                  # LLM-owned markdown — organized by LIFE AREA
     ├── wiki.md            # vault router (folder-note)
     ├── overview.md        # identity ("who is Hung")

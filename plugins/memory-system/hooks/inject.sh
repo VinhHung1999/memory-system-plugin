@@ -7,7 +7,9 @@ set -e
 
 VAULT="${SECOND_BRAIN_VAULT:-$HOME/Documents/Notes/HungVault/HungVault/brain2}"
 WIKI_CK="$VAULT/wiki/code-knowledge"
-RAW_CK="$VAULT/raw/code-knowledge"
+RAW_ROOT="$VAULT/raw"
+TODAY=$(date +%F)
+RAW_CK_TODAY="$RAW_ROOT/$TODAY/code-knowledge"
 
 # Read stdin
 INPUT=$(cat)
@@ -52,14 +54,14 @@ SYSTEM_MSG="${ICON} ${C_BOLD}${C_CYAN}Wiki memory${C_RESET} ${C_DIM}@ ${WIKI_SHO
 CONTEXT_MSG="[Wiki memory] Hung's universal coding knowledge lives in brain2 vault.
 
 - **Curated (read):** \`${WIKI_CK}/\` — each domain has \`bugs/\` and \`patterns/\` subfolders
-- **Inbox (write via store skill):** \`${RAW_CK}/\` — staging only; Hung promotes to wiki/ manually later
+- **Inbox (write via store skill):** \`${RAW_ROOT}/<YYYY-MM-DD>/code-knowledge/\` — date-bucketed staging (today: \`${TODAY}\`); Hung promotes to wiki/ manually later
 
 ## Domains (${DOMAIN_COUNT})
 ${DOMAINS_PLAIN}
 
 ## Workflow
 1. **Non-trivial task?** Use \`/memory-system:coder-memory-recall\` — it picks qmd search (semantic) or grep depending on query.
-2. **Hard-won lesson to save?** Use \`/memory-system:coder-memory-store\` — stages to \`raw/code-knowledge/\`. Never write to \`wiki/\` directly; that's Hung's curated space.
+2. **Hard-won lesson to save?** Use \`/memory-system:coder-memory-store\` — stages to \`raw/<YYYY-MM-DD>/code-knowledge/\` (today's date bucket). Never write to \`wiki/\` directly; that's Hung's curated space.
 3. **Trivial task (typo, build cmd, quick lookup)?** Skip memory entirely — don't invoke the skills.
 
 This is cross-project memory. Project-specific memory is built-in auto memory (separate system)."

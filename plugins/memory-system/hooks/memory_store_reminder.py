@@ -141,7 +141,7 @@ def main():
             # Block Claude from stopping and provide the reminder
             output = {
                 "decision": "block",
-                "reason": "Check recent turns for hard-won universal lessons (non-obvious bugs, surprising patterns, cross-project failures worth remembering). Use /memory-system:coder-memory-store — it stages to brain2/raw/code-knowledge/<domain>/<bugs|patterns>/ as inbox. Hung promotes to wiki/ manually later, so don't overthink classification. Be selective — skip anything Google-able or project-specific. If storing: 1 line report. If not: say 'Nothing worth storing.' NO analysis."
+                "reason": "Check recent turns for hard-won universal lessons (non-obvious bugs, surprising patterns, cross-project failures worth remembering). Use /memory-system:coder-memory-store — it stages to brain2/raw/<YYYY-MM-DD>/code-knowledge/<domain>/<bugs|patterns>/ (date-bucketed inbox, today's date). Hung promotes to wiki/ manually later, so don't overthink classification. Be selective — skip anything Google-able or project-specific. If storing: 1 line report. If not: say 'Nothing worth storing.' NO analysis."
             }
             print(json.dumps(output))
             sys.exit(0)

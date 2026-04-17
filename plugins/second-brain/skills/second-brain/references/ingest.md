@@ -46,12 +46,23 @@ pages into context when 20 will do.
 
 ### 3. Stash the raw source
 
-If the source is a local file outside `brain2/`, copy it to `brain2/raw/`.
-If it's a URL, save the fetched markdown to `brain2/raw/<slug>.md`.
+Raw ingests are bucketed by **date of ingest**: `brain2/raw/<YYYY-MM-DD>/...`.
+Use `date +%F` to compute today's bucket. Create the folder on first write of
+the day.
+
+- Local file outside `brain2/` → copy to `brain2/raw/<today>/`.
+- URL → save the fetched markdown to `brain2/raw/<today>/<slug>.md`.
 
 ```bash
-cp /path/to/source.pdf $SECOND_BRAIN_VAULT/raw/
+TODAY=$(date +%F)   # e.g. 2026-04-17
+mkdir -p "$SECOND_BRAIN_VAULT/raw/$TODAY"
+cp /path/to/source.pdf "$SECOND_BRAIN_VAULT/raw/$TODAY/"
 ```
+
+Exceptions (kept at `raw/` root, not date-bucketed):
+- `raw/assets/` — image drop zone (user-managed)
+- `raw/notion/` — Notion exports (preserve hash IDs, user-owned)
+- `raw/clippings/` — web clippings (if the user maintains this flat)
 
 Never modify a file once it's in `raw/` — immutable record.
 
@@ -199,7 +210,7 @@ Then stop.
 
 Ingest the current conversation as a source:
 - Treat as `source_kind: conversation`.
-- Save excerpt to `brain2/raw/conversations/<date>-<topic>.md`.
+- Save excerpt to `brain2/raw/<YYYY-MM-DD>/conversations/<topic>.md` (today's date bucket at the top; `<topic>` no date prefix needed since the folder carries it).
 - Source page is a summary, not the raw transcript.
 - Carefully attribute: "what the user said" vs. "what I synthesized"
   vs. "what we agreed on".

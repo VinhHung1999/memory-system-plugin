@@ -41,7 +41,7 @@ ${SECOND_BRAIN_VAULT:-~/Documents/Notes/HungVault/HungVault/brain2}/
 │   │   │   └── <insight>.md
 │   │   └── patterns/
 │   │       └── <insight>.md
-└── raw/code-knowledge/               # INBOX — secondary (fresh, unpromoted)
+└── raw/<YYYY-MM-DD>/code-knowledge/  # INBOX — date-bucketed, fresh, unpromoted
     └── <domain>/<bugs|patterns>/<insight>.md
 ```
 
@@ -72,7 +72,7 @@ If qmd is available, use it. Otherwise fall back to grep.
 1. Start with `qmd search` for a concrete keyword (error message, function name, library name).
 2. If zero or low-score results, escalate to `qmd vector_search` for the conceptual version of the query.
 3. Only use `qmd deep_search` when both fail and the task really warrants the cost.
-4. Filter hits to `wiki/code-knowledge/` paths (ignore `raw/notion/`, `raw/code-knowledge/`, `work/`, etc. unless user asks).
+4. Filter hits to `wiki/code-knowledge/` paths (ignore `raw/notion/`, `raw/*/code-knowledge/` date buckets, `work/`, etc. unless user asks).
 5. Use `qmd get <path>` or `qmd multi_get "wiki/code-knowledge/<domain>/**/*.md"` to read full matches.
 
 ### grep fallback
@@ -87,8 +87,8 @@ grep -r -l "keyword" "$WIKI_CK/<domain>/"
 # Widen to all domains if no hits
 grep -r -l "keyword" "$WIKI_CK/"
 
-# Last resort: include the inbox
-grep -r -l "keyword" "$VAULT/raw/code-knowledge/"
+# Last resort: include the inbox (all date buckets)
+grep -r -l "keyword" "$VAULT"/raw/*/code-knowledge/
 ```
 
 ---
@@ -146,7 +146,7 @@ Return a concise summary (under 200 words) to the main conversation. Include:
 1. Broaden keywords (try synonyms, drop qualifiers)
 2. Switch to `qmd vector_search` if you only used `qmd search`
 3. Search `universal/` if you only searched a specific domain
-4. Include `raw/code-knowledge/` (fresh inbox)
+4. Include `raw/*/code-knowledge/` (all date-bucketed inbox entries)
 5. Report "No relevant memories found" — not every task has prior learnings, and that's fine.
 
 ---

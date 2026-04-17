@@ -1,6 +1,6 @@
 ---
 name: coder-memory-store
-description: Stage universal coding lessons into Hung's brain2 wiki inbox at `raw/code-knowledge/`. Auto-invokes after difficult tasks with broadly-applicable insights (non-obvious bugs, surprising patterns, hard-won fixes). Trigger with "--store" or when user expresses frustration. Skip for trivial or project-specific patterns (built-in auto memory handles those).
+description: Stage universal coding lessons into Hung's brain2 wiki inbox at `raw/<YYYY-MM-DD>/code-knowledge/` (date-bucketed). Auto-invokes after difficult tasks with broadly-applicable insights (non-obvious bugs, surprising patterns, hard-won fixes). Trigger with "--store" or when user expresses frustration. Skip for trivial or project-specific patterns (built-in auto memory handles those).
 ---
 
 ## MANDATORY: Use Task Tool (Sub-Agent, Background)
@@ -19,7 +19,9 @@ Background sub-agent keeps the main conversation flowing while the write happens
 
 This skill **stages** insights into a staging inbox. It does **NOT** file them into the curated wiki. Hung promotes raw inbox items into `wiki/code-knowledge/` manually when he has time to review them.
 
-**You write to:** `${SECOND_BRAIN_VAULT:-~/Documents/Notes/HungVault/HungVault/brain2}/raw/code-knowledge/<domain>/<bugs|patterns>/<filename>.md`
+**You write to:** `${SECOND_BRAIN_VAULT:-~/Documents/Notes/HungVault/HungVault/brain2}/raw/<YYYY-MM-DD>/code-knowledge/<domain>/<bugs|patterns>/<filename>.md`
+
+The `<YYYY-MM-DD>` bucket is today's date (the day you're writing). This groups daily ingests together so Hung can scan his "inbox of 2026-04-17" at promotion time.
 
 **You never touch:** `wiki/code-knowledge/` — that's Hung's curated space.
 
@@ -36,7 +38,7 @@ Skip if any of the following is true:
 - **Trivial** — typo fix, format cleanup, simple build command
 - **Google-able in 30 seconds** — basic language syntax, well-documented library usage
 - **Project-specific** — specific API endpoint names, private business logic, session-bound state (built-in auto memory handles these)
-- **Already written** — if grep finds similar wording in `raw/code-knowledge/` or `wiki/code-knowledge/`, skip or merge rather than duplicate
+- **Already written** — if a recursive grep across `raw/*/code-knowledge/` (all date buckets) or `wiki/code-knowledge/` finds similar wording, skip or merge rather than duplicate
 
 Only store hard-won lessons: non-obvious bugs, surprising patterns, cross-project failures, fixes that took real debugging.
 
@@ -45,13 +47,17 @@ Only store hard-won lessons: non-obvious bugs, surprising patterns, cross-projec
 ## Storage layout
 
 ```
-${SECOND_BRAIN_VAULT}/raw/code-knowledge/
-├── <domain>/                   e.g., frontend, backend, mobile, automation, claude-code, universal
-│   ├── bugs/
-│   │   └── <insight>.md        a specific failure + fix
-│   └── patterns/
-│       └── <insight>.md        a recurring best practice, decision, or pattern
+${SECOND_BRAIN_VAULT}/raw/
+├── <YYYY-MM-DD>/               e.g., 2026-04-17 — today's date bucket
+│   └── code-knowledge/
+│       └── <domain>/           e.g., frontend, backend, mobile, automation, claude-code, universal
+│           ├── bugs/
+│           │   └── <insight>.md        a specific failure + fix
+│           └── patterns/
+│               └── <insight>.md        a recurring best practice, decision, or pattern
 ```
+
+**Date goes at the top of `raw/`**, above `code-knowledge/`. Everything you write lands under today's date. Hung reviews `raw/<today>/` at promotion time and moves items into `wiki/code-knowledge/<domain>/…`.
 
 **Only two subfolders per domain: `bugs/` and `patterns/`.** Finer classification (`decision` vs `pattern` vs `lesson` vs `structure` vs `library`) goes in the `category:` frontmatter field, not a folder. This keeps the inbox shallow so Hung can promote quickly.
 
@@ -86,7 +92,8 @@ Analyze the recent conversation for 0–3 insights (usually 0–1).
 
 ```bash
 VAULT="${SECOND_BRAIN_VAULT:-$HOME/Documents/Notes/HungVault/HungVault/brain2}"
-grep -r -l "keyword" "$VAULT/raw/code-knowledge/<domain>/" 2>/dev/null
+# Search across ALL date buckets, not just today's
+grep -r -l "keyword" "$VAULT"/raw/*/code-knowledge/<domain>/ 2>/dev/null
 grep -r -l "keyword" "$VAULT/wiki/code-knowledge/<domain>/" 2>/dev/null
 ```
 
@@ -97,9 +104,11 @@ grep -r -l "keyword" "$VAULT/wiki/code-knowledge/<domain>/" 2>/dev/null
 
 ### 3. Write file
 
-Path: `${SECOND_BRAIN_VAULT}/raw/code-knowledge/<domain>/<bugs|patterns>/<slug>.md`
+Path: `${SECOND_BRAIN_VAULT}/raw/<YYYY-MM-DD>/code-knowledge/<domain>/<bugs|patterns>/<slug>.md`
 
-Filename slug: kebab-case, descriptive (`usecallback-stale-closure.md`, `sse-crlf-lf-parsing.md`).
+Compute `<YYYY-MM-DD>` with `date +%F` (today's date). Create the date folder + intermediate folders if they don't exist (`mkdir -p`).
+
+Filename slug: kebab-case, descriptive (`usecallback-stale-closure.md`, `sse-crlf-lf-parsing.md`). Do NOT prefix the filename with the date — the date is already in the folder path.
 
 **Frontmatter schema (match the wiki's B++ convention):**
 
@@ -145,7 +154,7 @@ Silent — don't fail the write if qmd isn't installed.
 
 ### 5. Report
 
-One line back to the main conversation: `Stored to raw/code-knowledge/<domain>/<bugs|patterns>/<filename>.md`. Nothing more.
+One line back to the main conversation: `Stored to raw/<YYYY-MM-DD>/code-knowledge/<domain>/<bugs|patterns>/<filename>.md`. Nothing more.
 
 ---
 
