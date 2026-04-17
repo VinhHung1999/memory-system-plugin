@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [memory-system 1.10.5] — 2026-04-17
+
+### Changed
+- `prompt-reminder.sh` (UserPromptSubmit) now emits a short `systemMessage` — a dimmed one-line banner so the user can see the hook firing. `additionalContext` to Claude is unchanged.
+
+[memory-system 1.10.5]: https://github.com/VinhHung1999/memory-system-plugin/releases/tag/memory-system-v1.10.5
+
 ## [memory-system 1.10.4 / second-brain 1.0.1] — 2026-04-17
 
 ### Changed
