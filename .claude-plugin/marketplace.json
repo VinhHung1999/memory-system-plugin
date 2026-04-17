@@ -4,8 +4,8 @@
     "name": "Phu Hung"
   },
   "metadata": {
-    "description": "Maniax — Claude Code plugins collection. Ships: memory-system (4-tier knowledge & memory), marketing-toolkit (8 marketing skills from Google's Digital Marketing certificate), and learn-coursera (meta-skill for turning Coursera courses into Claude Code skills).",
-    "version": "1.12.0"
+    "description": "Maniax — Claude Code plugins collection. Ships: memory-system (4-tier knowledge & memory), marketing-toolkit (8 marketing skills from Google's Digital Marketing certificate), learn-coursera (meta-skill for turning Coursera courses into Claude Code skills), and second-brain (LLM-maintained Obsidian wiki).",
+    "version": "1.13.0"
   },
   "plugins": [
     {
@@ -48,6 +48,20 @@
       "repository": "https://github.com/VinhHung1999/memory-system-plugin",
       "license": "MIT",
       "keywords": ["coursera", "learning", "course-extraction", "transcript", "skill-builder", "playwright", "education", "meta-skill"],
+      "category": "productivity"
+    },
+    {
+      "name": "second-brain",
+      "source": "./plugins/second-brain",
+      "description": "LLM-maintained personal knowledge wiki for your Obsidian vault. Implements the LLM Wiki pattern: instead of RAG on every query, the LLM incrementally compiles knowledge into a persistent, cross-linked wiki of markdown files. Operations: ingest (source → wiki), query (synthesize with citations), lint (broken links / orphans / contradictions), note (discrete topical file), brain-dump (timestamped journal), kanban tasks. Vault path is configurable via the SECOND_BRAIN_VAULT environment variable. Triggers on English and Vietnamese prompts.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Phu Hung"
+      },
+      "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+      "repository": "https://github.com/VinhHung1999/memory-system-plugin",
+      "license": "MIT",
+      "keywords": ["second-brain", "knowledge-wiki", "obsidian", "llm-wiki", "note-taking", "kanban", "journal", "personal-knowledge-management"],
       "category": "productivity"
     }
   ]

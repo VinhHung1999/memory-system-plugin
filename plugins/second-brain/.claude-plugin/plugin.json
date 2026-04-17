@@ -1,0 +1,11 @@
+{
+  "name": "second-brain",
+  "description": "LLM-maintained knowledge wiki for your Obsidian vault. Instead of re-deriving knowledge from raw sources via RAG on every query, the LLM incrementally compiles knowledge into a persistent, cross-linked wiki of markdown files. Supports ingest (source → wiki), query (synthesize with citations), lint (broken links / orphans / contradictions), note (discrete topical file), brain-dump (timestamped journal), and kanban task management. Vault path is configurable via the SECOND_BRAIN_VAULT environment variable. Triggers on English and Vietnamese phrasings.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Phu Hung",
+    "url": "https://github.com/VinhHung1999"
+  },
+  "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+  "license": "MIT"
+}

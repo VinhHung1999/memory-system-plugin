@@ -1,0 +1,166 @@
+# brain2 — Hung's Second Brain Vault
+
+This is a personal LLM-maintained knowledge wiki. Any LLM (Claude Code,
+Codex, etc.) opened in this directory should follow the conventions
+below. The companion skill that drives ingest/query/lint operations is
+`~/.claude/skills/second-brain/`.
+
+## Layout — two top-level areas
+
+```
+brain2/
+├── CLAUDE.md              # this file — conventions for the vault
+├── log.md                 # chronological activity log (append-only)
+├── raw/                   # immutable source documents — never edit
+│   ├── assets/            # images
+│   └── notion/            # Notion exports preserved with their hash IDs
+└── wiki/                  # LLM-curated knowledge — the compounding artifact
+    ├── wiki.md            # vault router (folder-note)
+    ├── overview.md        # identity — "who is Hung"
+    ├── work/              # company/job knowledge — MoMo-specific lives here
+    ├── code-knowledge/    # generic tech, transferable across jobs
+    ├── projects/          # personal/side projects (when accreted)
+    ├── research/          # active deep-dive research (when accreted)
+    ├── doing/             # current focus / WIP / status (when accreted)
+    └── personal/          # health, goals, journal (when accreted)
+```
+
+`brain2/` is the storage container with two piles: immutable `raw/`
+sources on one side, LLM-curated `wiki/` on the other.
+
+Inside each life-area folder, organize by **domain hierarchy**, not by
+file type. Nest folders to mirror the real domain structure (e.g.
+`work/momo/app-platform/load-miniapp/`). Every folder gets its own
+folder-note MOC (same name as folder). Files within a folder are flat —
+the page's `type:` frontmatter (`source` / `entity` / `concept` /
+`synthesis` / `index`) distinguishes them.
+
+**Per-folder MOC required (folder-note pattern).** Every folder has a
+MOC file **named after the folder itself** — `work/work.md`,
+`code-knowledge/code-knowledge.md`. This makes wikilinks clean and unique:
+`[[work]]` resolves directly to the work MOC.
+
+The MOC lists pages in the folder, groups into clusters, surfaces gaps.
+Update on every ingest that adds/renames a page.
+
+**No `## Parent` sections in folder notes.** Obsidian's Backlinks panel
+handles upward navigation. Explicit parent wikilinks create bidirectional
+arrows that clutter the graph.
+
+Top-level navigation:
+- `brain2/wiki/wiki.md` — vault entry point
+- `brain2/wiki/overview.md` — identity page
+- `brain2/wiki/<area>/<area>.md` — per-area MOC
+
+**`work/` vs `code-knowledge/` — the key split:**
+
+- `work/` = knowledge that only makes sense in the company's context
+  (MaxAPI Core, BridgeMode 1/2, MoMo's bundle state machine).
+- `code-knowledge/` = knowledge transferable to any job (Module Federation
+  theory, Kotlin Coroutines, JSI, dynamic bundle injection as a pattern).
+
+When in doubt, ask which side it belongs on.
+
+## Hard rules
+
+1. Never modify files in `raw/` once written — they're immutable record.
+2. Never write outside `brain2/` — other HungVault folders (`Decisions/`,
+   `Learning/`, `Projects/`, `Quick-notes/`, `Research/`, `my kanban.md`)
+   are user-owned and outside this skill's scope.
+3. One concept = one page — BUT gom into one page when multiple
+   "concepts" describe the same thing in the same domain. User prefers
+   coherent narratives over fragmented nodes.
+4. English content (even though Hung converses in Vietnamese).
+5. No emoji unless explicitly asked.
+6. New life-area folders accrete as content arrives — don't pre-create.
+
+## File naming
+
+- All filenames kebab-case: `carl-jung.md`, `red-book-summary.md`.
+- Slug = filename without `.md`. Display name in frontmatter `aliases:`.
+- **Bare wikilinks only**: `[[carl-jung]]`, not `[[entities/carl-jung]]`.
+  Obsidian resolves across the vault; folder paths are volatile.
+
+## Frontmatter
+
+Every wiki page starts with YAML frontmatter:
+
+```yaml
+---
+type: source | entity | concept | synthesis | overview | index
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+aliases:
+  - Display Name
+sources:                  # non-source pages — which sources back this
+  - source-slug-1
+tags: [topic1, topic2]
+---
+```
+
+Source pages additionally:
+```yaml
+source_kind: article | book | paper | podcast | video | conversation | journal | image
+source_path: raw/some-file.pdf
+source_url: https://...
+author: Name
+date_published: YYYY-MM-DD
+```
+
+Synthesis pages additionally:
+```yaml
+question: "the question this synthesis answers"
+```
+
+Always update `updated:` when you edit.
+
+## Wikilinks
+
+- Internal: `[[page-slug]]` or `[[page-slug|Display Text]]` — bare slugs only.
+- Citations: link to source pages, not raw files.
+  E.g.: "Jung argued the unconscious has structure ([[red-book-summary]])."
+
+## log.md
+
+Append-only. Every entry: `## [YYYY-MM-DD] <op> | <title>`.
+
+```markdown
+## [2026-04-16] ingest | The Red Book by C.G. Jung
+Created [[red-book-summary]]. Updated [[carl-jung]], [[individuation]].
+Notable: introduced concept of [[shadow]].
+```
+
+Operations: `init`, `ingest`, `query`, `lint`, `manual`.
+
+Grep recent: `grep "^## \[" log.md | tail -10`.
+
+## On contradictions
+
+New source contradicts existing claim? **Don't overwrite.** Add an
+`## Open questions` or `## Contradictions` section to the affected
+page citing both sides. Wiki should reflect the user's evolving view,
+including unsettled parts.
+
+## On compounding
+
+Knowledge should compound. When a query takes real reasoning, file the
+answer back as a synthesis page. Don't let explorations disappear into
+chat history.
+
+## Obsidian config
+
+`.obsidian/app.json` has `userIgnoreFilters: ["brain2/raw/"]` so `raw/`
+is hidden from Obsidian's file tree, search, and graph.
+
+Recommended community plugin: **Folder Note Core** — clicking a folder
+opens its folder-note automatically (matches our `<folder>/<folder>.md`
+convention).
+
+## See also
+
+- `~/.claude/skills/second-brain/SKILL.md` — operation dispatch
+- `~/.claude/skills/second-brain/references/ingest.md` — ingest workflow
+- `~/.claude/skills/second-brain/references/query.md` — query workflow
+- `~/.claude/skills/second-brain/references/lint.md` — lint workflow
+- `~/.claude/skills/second-brain/references/conventions.md` — full schema
+- `~/.claude/skills/second-brain/scripts/check-broken-links.sh` — link audit
