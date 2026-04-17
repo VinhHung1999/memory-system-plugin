@@ -72,7 +72,18 @@ escape_json() {
 SYSTEM_MSG_JSON=$(escape_json "$SYSTEM_MSG")
 CONTEXT_MSG_JSON=$(escape_json "$CONTEXT_MSG")
 
-cat <<EOF
+# PostCompact schema does NOT allow hookSpecificOutput.additionalContext;
+# only SessionStart (and UserPromptSubmit/PostToolUse) do. For PostCompact,
+# emit only the top-level systemMessage — the SessionStart context is still
+# loaded from earlier in the same session anyway.
+if [ "$HOOK_EVENT" = "PostCompact" ]; then
+  cat <<EOF
+{
+  "systemMessage": $SYSTEM_MSG_JSON
+}
+EOF
+else
+  cat <<EOF
 {
   "hookSpecificOutput": {
     "hookEventName": "$HOOK_EVENT",
@@ -81,3 +92,4 @@ cat <<EOF
   "systemMessage": $SYSTEM_MSG_JSON
 }
 EOF
+fi
