@@ -33,19 +33,17 @@ Background sub-agent lets the search happen in parallel without blocking the mai
 
 ```
 ${SECOND_BRAIN_VAULT:-~/Documents/Notes/HungVault/HungVault/brain2}/
-├── wiki/code-knowledge/              # CURATED — primary search target
-│   ├── code-knowledge.md             # top-level folder-note (MOC)
-│   ├── <domain>/                     # frontend, backend, mobile, automation, claude-code, universal
-│   │   ├── <domain>.md               # per-domain MOC
-│   │   ├── bugs/
-│   │   │   └── <insight>.md
-│   │   └── patterns/
-│   │       └── <insight>.md
-└── raw/<YYYY-MM-DD>/code-knowledge/  # INBOX — date-bucketed, fresh, unpromoted
-    └── <domain>/<bugs|patterns>/<insight>.md
+└── wiki/code-knowledge/              # CURATED — only search target
+    ├── code-knowledge.md             # top-level folder-note (MOC)
+    └── <domain>/                     # frontend, backend, mobile, automation, claude-code, universal
+        ├── <domain>.md               # per-domain MOC
+        ├── bugs/
+        │   └── <insight>.md
+        └── patterns/
+            └── <insight>.md
 ```
 
-**Default: search wiki only.** Only widen to `raw/` if the user explicitly says "check inbox too" or wiki search returns nothing and the query looks recent.
+**Search wiki ONLY — never `raw/`.** The `raw/` inbox is staging-only; entries there are unreviewed and may be wrong, contradictory, or duplicates. Hung promotes valuable items into `wiki/` manually. The qmd `brain2` collection is configured against `brain2/wiki/` precisely so recall never surfaces raw entries. Even if grep is the fallback, restrict to `wiki/code-knowledge/`.
 
 ---
 
@@ -74,8 +72,8 @@ If qmd is available, use it. Otherwise fall back to grep.
 1. Start with `qmd search -c brain2 "..."` for a concrete keyword (error message, function name, library name).
 2. If zero or low-score results, escalate to `qmd vsearch -c brain2 "..."` for the conceptual version of the query.
 3. Use `qmd query -c brain2 "..."` for hard queries where you want expansion + reranking — it's the highest-quality option but slowest.
-4. Filter hits to `wiki/code-knowledge/` paths (ignore `raw/notion/`, `raw/*/code-knowledge/` date buckets, `work/`, etc. unless user asks).
-5. Use `qmd get <path>` or `qmd multi-get "wiki/code-knowledge/<domain>/**/*.md"` to read full matches.
+4. Filter hits to `code-knowledge/` paths (the brain2 collection is rooted at `brain2/wiki/`, so `code-knowledge/...` already means wiki/code-knowledge — ignore `work/`, `notes/`, `journal/`, etc. unless the user asks).
+5. Use `qmd get <path>` or `qmd multi-get "code-knowledge/<domain>/**/*.md"` to read full matches.
 
 ### grep fallback
 
@@ -89,8 +87,9 @@ grep -r -l "keyword" "$WIKI_CK/<domain>/"
 # Widen to all domains if no hits
 grep -r -l "keyword" "$WIKI_CK/"
 
-# Last resort: include the inbox (all date buckets)
-grep -r -l "keyword" "$VAULT"/raw/*/code-knowledge/
+# Do NOT widen to $VAULT/raw/ — raw/ is unreviewed staging; entries there
+# may be wrong or duplicate. If wiki returns nothing, report "no relevant
+# memories found" rather than scraping the inbox.
 ```
 
 ---
@@ -148,8 +147,7 @@ Return a concise summary (under 200 words) to the main conversation. Include:
 1. Broaden keywords (try synonyms, drop qualifiers)
 2. Switch to `qmd vsearch` (or `qmd query` for the slowest/highest-recall option) if you only used `qmd search`
 3. Search `universal/` if you only searched a specific domain
-4. Include `raw/*/code-knowledge/` (all date-bucketed inbox entries)
-5. Report "No relevant memories found" — not every task has prior learnings, and that's fine.
+4. Report "No relevant memories found" — not every task has prior learnings, and that's fine. Do NOT fall back to `raw/`; it's unreviewed staging.
 
 ---
 

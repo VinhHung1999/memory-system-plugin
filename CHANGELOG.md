@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [memory-system 1.10.8] — 2026-04-18
+
+### Changed
+- `coder-memory-recall` no longer falls back to `brain2/raw/` under any circumstance. The qmd `brain2` collection is rooted at `brain2/wiki/`, so qmd already won't surface raw entries; this change removes the residual grep-fallback paths that pointed into `raw/*/code-knowledge/` and the "include the inbox" escalation step. Rationale: `raw/` is unreviewed staging — entries there may be wrong, contradictory, or duplicates of curated wiki notes.
+- Storage-layout diagram in the recall skill trimmed to wiki-only.
+
+[memory-system 1.10.8]: https://github.com/VinhHung1999/memory-system-plugin/releases/tag/memory-system-v1.10.8
+
 ## [memory-system 1.10.7] — 2026-04-18
 
 ### Changed

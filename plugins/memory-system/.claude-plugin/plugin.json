@@ -1,7 +1,7 @@
 {
   "name": "memory-system",
   "description": "Wiki-backed knowledge & memory system for Claude Code: stages insights to brain2 vault (raw/<YYYY-MM-DD>/code-knowledge inbox, date-bucketed), recalls from curated wiki/code-knowledge. Rules + project memory + pre-commit gate.",
-  "version": "1.10.7",
+  "version": "1.10.8",
   "author": {
     "name": "Phu Hung",
     "url": "https://github.com/VinhHung1999"
