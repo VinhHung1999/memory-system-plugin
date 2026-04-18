@@ -147,10 +147,10 @@ One-sentence summary of the lesson.
 ### 4. Sync qmd index (if available)
 
 ```bash
-qmd update brain2 >/dev/null 2>&1 || true
+qmd update >/dev/null 2>&1 || true
 ```
 
-Silent — don't fail the write if qmd isn't installed.
+Silent — don't fail the write if qmd isn't installed. (`qmd update` re-indexes all collections; no per-collection arg.)
 
 ### 5. Report
 

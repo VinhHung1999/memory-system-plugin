@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [memory-system 1.10.7] — 2026-04-18
+
+### Changed
+- `coder-memory-recall` and `coder-memory-store` updated for renamed qmd CLI commands:
+  - `qmd vector_search` → `qmd vsearch` (pure vector similarity, no rerank)
+  - `qmd deep_search` → `qmd query` (recommended — query expansion + reranking)
+  - `qmd multi_get` → `qmd multi-get` (hyphen, not underscore)
+  - `qmd status brain2` → `qmd status` (no per-collection arg)
+  - `qmd update brain2` → `qmd update` (no per-collection arg; re-indexes all)
+- Recall examples now scope every search with `-c brain2` so wiki hits aren't drowned out by other collections.
+
+[memory-system 1.10.7]: https://github.com/VinhHung1999/memory-system-plugin/releases/tag/memory-system-v1.10.7
+
 ## [memory-system 1.10.6] — 2026-04-17
 
 ### Changed

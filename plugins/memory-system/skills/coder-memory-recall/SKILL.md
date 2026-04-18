@@ -55,25 +55,27 @@ qmd is Hung's local search engine over the brain2 collection. Three tools, by co
 
 | Tool | Speed | Use for |
 |---|---|---|
-| `qmd search "..."` | ~30 ms | keyword / exact-phrase |
-| `qmd vector_search "..."` | ~2 s | concept / meaning-based (vocabulary may differ from the query) |
-| `qmd deep_search "..."` | ~10 s | hard queries — expands variations, searches each, reranks |
+| `qmd search "..."` | ~30 ms | full-text keyword (BM25, no LLM) |
+| `qmd vsearch "..."` | ~2 s | pure vector similarity (concept / meaning-based) |
+| `qmd query "..."` | ~10 s | recommended — query expansion + reranking, best recall on hard queries |
+
+Always scope to the brain2 collection with `-c brain2` so wiki hits aren't drowned out by other collections.
 
 Check availability first:
 
 ```bash
-command -v qmd >/dev/null 2>&1 && qmd status brain2 >/dev/null 2>&1
+command -v qmd >/dev/null 2>&1 && qmd status >/dev/null 2>&1
 ```
 
 If qmd is available, use it. Otherwise fall back to grep.
 
 ### qmd workflow
 
-1. Start with `qmd search` for a concrete keyword (error message, function name, library name).
-2. If zero or low-score results, escalate to `qmd vector_search` for the conceptual version of the query.
-3. Only use `qmd deep_search` when both fail and the task really warrants the cost.
+1. Start with `qmd search -c brain2 "..."` for a concrete keyword (error message, function name, library name).
+2. If zero or low-score results, escalate to `qmd vsearch -c brain2 "..."` for the conceptual version of the query.
+3. Use `qmd query -c brain2 "..."` for hard queries where you want expansion + reranking — it's the highest-quality option but slowest.
 4. Filter hits to `wiki/code-knowledge/` paths (ignore `raw/notion/`, `raw/*/code-knowledge/` date buckets, `work/`, etc. unless user asks).
-5. Use `qmd get <path>` or `qmd multi_get "wiki/code-knowledge/<domain>/**/*.md"` to read full matches.
+5. Use `qmd get <path>` or `qmd multi-get "wiki/code-knowledge/<domain>/**/*.md"` to read full matches.
 
 ### grep fallback
 
@@ -144,7 +146,7 @@ Return a concise summary (under 200 words) to the main conversation. Include:
 ## If no results found
 
 1. Broaden keywords (try synonyms, drop qualifiers)
-2. Switch to `qmd vector_search` if you only used `qmd search`
+2. Switch to `qmd vsearch` (or `qmd query` for the slowest/highest-recall option) if you only used `qmd search`
 3. Search `universal/` if you only searched a specific domain
 4. Include `raw/*/code-knowledge/` (all date-bucketed inbox entries)
 5. Report "No relevant memories found" — not every task has prior learnings, and that's fine.
@@ -156,7 +158,7 @@ Return a concise summary (under 200 words) to the main conversation. Include:
 ```
 ## Recall for: "<task summary>"
 
-Searched: qmd vector_search "<query>" in wiki/code-knowledge/<domain>/
+Searched: qmd vsearch -c brain2 "<query>" in wiki/code-knowledge/<domain>/
 
 Top matches:
 1. **<title>** (<path>)
