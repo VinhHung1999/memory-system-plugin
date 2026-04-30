@@ -333,36 +333,119 @@ AT 2 AM (smart, slow, LLM-driven — PLANNED)
 
 ---
 
-## 7. Cleanup Flow (Future — AutoDream pattern)
+## 7. Dream Pipeline — Multi-project, sub-agent dispatched
 
-```
-       Wiki grows over time
-                │
-                ▼
-        ┌─────────────────────────────────┐
-        │  Hung invokes (future):         │
-        │  /second-brain:                 │
-        │  project-memory-dream           │
-        │  project=<name> [role=<role>]   │
-        └────────────┬────────────────────┘
-                     │
-                     │ AutoDream pattern:
-                     ▼
-        ┌─────────────────────────────────┐
-        │  Per role file:                 │
-        │  • PRUNE outdated entries       │
-        │  • MERGE duplicates             │
-        │  • REFRESH stale specifics      │
-        │  Output: dream report + diff    │
-        └────────────┬────────────────────┘
-                     │
-                     │ Default --dry-run
-                     ▼
-        Hung reviews → --apply → wiki updated
+Daily 2 AM coordinator that digests each registered workspace's observation.md
+into project memory. Dispatches role sub-agents (PO/DEV/QC/CMO) per project so
+each role applies its own domain expertise to extract insights.
+
+### Workspace registry
+
+`observation_logger` (Stop hook) maintains
+`~/.claude/observation-workspaces.json`:
+
+```json
+[
+  {
+    "path": "/Users/phuhung/Documents/Studies/AIProjects/menh-viet",
+    "project": "menh-viet",
+    "first_seen": "2026-04-30",
+    "last_active": "2026-04-30"
+  },
+  ...
+]
 ```
 
-Status: **deferred** (design note saved at
-`brain2/raw/2026-04-29/code-knowledge/claude-code/patterns/auto-dream-for-project-memory.md`).
+Self-registering: first time a workspace gets an observation.md, it's added.
+Each subsequent turn bumps `last_active`. Workspace path can change — registry
+self-cleans (orphaned entries pruned by dream).
+
+### Dream coordinator flow (2 AM)
+
+```
+                ┌─────────────────────────┐
+                │  cron 0 2 * * *         │
+                │  → claude --skill       │
+                │    /second-brain:       │
+                │    project-memory-dream │
+                └────────────┬────────────┘
+                             │
+                             ▼
+   ┌──────────────────────────────────────────────┐
+   │ DREAM COORDINATOR (single Claude session)    │
+   ├──────────────────────────────────────────────┤
+   │ 1. Read ~/.claude/observation-workspaces.json│
+   │ 2. For each workspace:                       │
+   │    - if path doesn't exist → prune (orphan)  │
+   │    - if observation.md empty → skip          │
+   │    - else → enqueue                          │
+   │ 3. Per queued workspace:                     │
+   │    a. Parse observation.md by [role: X] tag  │
+   │    b. Resolve project name → vault path      │
+   │    c. For each role with entries:            │
+   │       Task(subagent_type=<role>,             │
+   │            prompt=DREAM_MODE + slice +       │
+   │                   existing memory + overview)│
+   │    d. Each sub-agent:                        │
+   │       - Cluster + quality gate + dedup       │
+   │       - Append insights to memory/<role>.md  │
+   │       - Return summary JSON                  │
+   │    e. Coordinator post-process:              │
+   │       - Merge shared.md candidates           │
+   │       - Archive observation.md →             │
+   │         workspace/.observations/<date>.md    │
+   │       - Truncate observation.md to header    │
+   │ 4. Generate vault dream report:              │
+   │    wiki/.dream/<date>.md                     │
+   │ 5. Save updated registry                     │
+   └──────────────────────────────────────────────┘
+```
+
+### Why sub-agent per role?
+
+Each role's quality gate is encoded in its agent prompt (po.md/dev.md/etc.).
+Reusing those agents in DREAM MODE means:
+- PO judges stakeholder/product insights (its expertise)
+- DEV judges architecture/codebase (its expertise)
+- QC judges flaky/regression patterns (its expertise)
+- CMO judges channel/positioning (its expertise)
+
+Single dream-agent would lack this domain expertise → sub-agent dispatch is
+the right abstraction.
+
+### What dream does NOT do
+
+- ❌ No pre-dream backup (git history of brain2 vault is the safety net)
+- ❌ No auto-resolve of contradictions (flag in report, leave for human)
+- ❌ No refresh of stale specifics (need external truth source — defer)
+- ❌ No cross-project pattern promotion (single-project scope in v1)
+- ❌ No touch on wiki/code-knowledge/ (universal store retired)
+
+### Dream report
+
+Saved daily at `wiki/.dream/<date>.md`. Contains: per-project entry counts,
+contradictions flagged for review, orphaned workspaces pruned, vault flags
+(workspaces without project folder).
+
+Hung reads next morning, manually resolves contradictions if any.
+
+### Idempotency + failure modes
+
+- Re-runnable on same day (sub-agents dedup, archive-already-done = skip)
+- One sub-agent crash → continue with next role
+- Orphaned workspaces auto-pruned from registry
+- Cron overlap protection via `~/.claude/.dream.lock` flock
+
+### Cost estimate
+
+- ~14 projects × 4 roles = 56 potential sub-agent slots
+- Realistic: 5-15 sub-agents fire per night (most days have no activity for
+  most roles in most projects)
+- Per sub-agent: ~$0.05-0.15 (filtered slice, not full transcript)
+- **~$0.50-2/night** (~$15-60/month) for personal active use
+
+Status: **SKILL.md built** (`plugins/second-brain/skills/project-memory-dream/`).
+Cron setup pending. Live testing pending.
 
 ---
 
@@ -408,8 +491,8 @@ Status: **deferred** (design note saved at
 
 | Plugin | Version | Notes |
 |---|---|---|
-| marketplace.json (root) | 3.0.0 | After observation-driven pipeline shift |
-| second-brain | 3.0.0 | Active store retired; observation_logger Stop hook |
+| marketplace.json (root) | 3.1.0 | After dream skill + workspace registry |
+| second-brain | 3.1.0 | Dream skill added; observation_logger self-registers workspaces |
 | memory-system | 1.11.0 | After moving vault skills out |
 | po | 0.4.0 | Capture section now points to observation log |
 | dev | 0.1.0 | Same |

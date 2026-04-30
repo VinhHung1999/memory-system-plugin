@@ -1,7 +1,7 @@
 {
   "name": "second-brain",
-  "description": "All brain2 vault interactions in one plugin. LLM-maintained knowledge wiki for your Obsidian vault. Skills: second-brain (mega: ingest/query/lint/note/brain-dump/kanban), memory-recall (read-only access to wiki/code-knowledge/), project-memory-recall (role-partitioned per-project memory query). Active store skills retired in favor of observation-driven pipeline: every Claude turn is auto-logged to workspace `observation.md` by the Stop hook (auto-creates if missing); a nightly dream skill (2 AM, planned) reads observation.md and extracts insights into wiki/projects/<X>/memory/<role>.md, then archives the day's log. 3 hooks: SessionStart inject (wiki sections banner), UserPromptSubmit reminder (recall pointer), Stop observation_logger. Vault path configurable via SECOND_BRAIN_VAULT env var.",
-  "version": "3.0.0",
+  "description": "All brain2 vault interactions in one plugin. LLM-maintained knowledge wiki for your Obsidian vault. Skills: second-brain (mega: ingest/query/lint/note/brain-dump/kanban), memory-recall (read-only wiki/code-knowledge/), project-memory-recall (role-partitioned per-project query), project-memory-dream (daily 2 AM coordinator that dispatches PO/DEV/QC/CMO sub-agents per project to digest observation logs into memory). Observation-driven pipeline: every Claude turn auto-logged to workspace `observation.md` by Stop hook (auto-creates + self-registers in ~/.claude/observation-workspaces.json); nightly dream digests per workspace, archives day's log. 3 hooks: SessionStart inject, UserPromptSubmit reminder, Stop observation_logger. Vault path via SECOND_BRAIN_VAULT.",
+  "version": "3.1.0",
   "author": {
     "name": "Phu Hung",
     "url": "https://github.com/VinhHung1999"

@@ -30,6 +30,10 @@ from pathlib import Path
 # Walk up to find observation.md (cwd → project root).
 MAX_WALK_UP = 6  # Safety: don't walk above this many parents.
 
+# Registry of workspaces with active observation.md files.
+# Read by the daily dream skill to know which workspaces to process.
+WORKSPACE_REGISTRY = Path.home() / ".claude" / "observation-workspaces.json"
+
 
 # ----- Helpers --------------------------------------------------------------
 
@@ -265,6 +269,47 @@ def append_atomic(target_path, content):
         return False
 
 
+def register_workspace(obs_file):
+    """
+    Insert workspace into ~/.claude/observation-workspaces.json (if new) or
+    bump last_active (if existing). Used by the daily dream skill to discover
+    workspaces with active observation logs.
+    """
+    workspace = obs_file.parent.resolve()
+    project = workspace.name
+    today = datetime.now().strftime("%Y-%m-%d")
+
+    try:
+        WORKSPACE_REGISTRY.parent.mkdir(parents=True, exist_ok=True)
+        if WORKSPACE_REGISTRY.is_file():
+            with open(WORKSPACE_REGISTRY, "r") as f:
+                data = json.load(f)
+        else:
+            data = []
+    except (OSError, json.JSONDecodeError):
+        data = []
+
+    # Match by path; bump last_active if existing
+    for entry in data:
+        if entry.get("path") == str(workspace):
+            entry["last_active"] = today
+            entry["project"] = project
+            break
+    else:
+        data.append({
+            "path": str(workspace),
+            "project": project,
+            "first_seen": today,
+            "last_active": today,
+        })
+
+    try:
+        with open(WORKSPACE_REGISTRY, "w") as f:
+            json.dump(data, f, indent=2)
+    except OSError as e:
+        print(f"observation_logger: failed to update registry: {e}", file=sys.stderr)
+
+
 # ----- Main -----------------------------------------------------------------
 
 def main():
@@ -297,7 +342,8 @@ def main():
     entry = format_entry(timestamp, role, user_text, assistant_text, tool_summaries)
 
     # Append
-    append_atomic(obs_file, entry)
+    if append_atomic(obs_file, entry):
+        register_workspace(obs_file)
     sys.exit(0)
 
 

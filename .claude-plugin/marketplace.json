@@ -5,7 +5,7 @@
   },
   "metadata": {
     "description": "Maniax — Claude Code plugins collection. Ships: memory-system (project-local knowledge tooling: rules/init-memory/knowledge-updater + pre-commit gate), second-brain (brain2 vault + observation-driven memory pipeline: capture every turn → nightly dream digests → wiki), marketing-toolkit (8 marketing skills), learn-coursera (Coursera-to-skill meta-skill), tmux-team (multi-agent Scrum team scaffolding), po/dev/qc/cmo (role agents + skills).",
-    "version": "3.0.0"
+    "version": "3.1.0"
   },
   "plugins": [
     {
@@ -53,8 +53,8 @@
     {
       "name": "second-brain",
       "source": "./plugins/second-brain",
-      "description": "All brain2 vault interactions + observation-driven memory pipeline. Skills: second-brain (mega: ingest/query/lint/note/brain-dump/kanban), memory-recall (read-only wiki/code-knowledge/), project-memory-recall (role-partitioned per-project query). Active store retired — replaced by Stop hook `observation_logger` that auto-appends every Claude turn to workspace observation.md (auto-creates if missing). Nightly dream skill (planned) digests observation.md → extracts insights to wiki/projects/<X>/memory/<role>.md → archives. 3 hooks: SessionStart inject, UserPromptSubmit reminder, Stop observation_logger. Vault path via SECOND_BRAIN_VAULT.",
-      "version": "3.0.0",
+      "description": "All brain2 vault interactions + observation-driven memory pipeline. Skills: second-brain (mega), memory-recall (read-only universal lessons), project-memory-recall (per-project per-role query), project-memory-dream (daily coordinator dispatching PO/DEV/QC/CMO sub-agents per project to digest observation logs). Stop hook `observation_logger` auto-logs every turn to workspace observation.md and self-registers workspace in ~/.claude/observation-workspaces.json. Dream cron at 2 AM iterates registry, dispatches role sub-agents per project, archives the day's log. 3 hooks: SessionStart inject, UserPromptSubmit reminder, Stop observation_logger. Vault path via SECOND_BRAIN_VAULT.",
+      "version": "3.1.0",
       "author": {
         "name": "Phu Hung"
       },
