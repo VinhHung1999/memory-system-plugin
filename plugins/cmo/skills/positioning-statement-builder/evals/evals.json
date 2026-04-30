@@ -1,0 +1,47 @@
+{
+  "skill_name": "positioning-statement-builder",
+  "evals": [
+    {
+      "id": 0,
+      "name": "build-fintech-positioning",
+      "prompt": "Help me build a positioning statement. We're a B2B fintech serving mid-market finance teams ($50M-$500M revenue) running Sage, NetSuite, or QuickBooks. Our value prop draft: 'One-click reconciliation inside the ERP, audit-grade trail, multi-currency native.' Competitors: Bill.com, Tipalti, AvidXchange. We want to frame this as 'ERP-native AP/AR workflow' not 'AP automation software.'",
+      "expected_assertions": [
+        "Should run scripts/build_positioning.py with the inputs",
+        "Should produce 3-element statement (target + value prop + frame of reference)",
+        "Should validate frame as need-based ('ERP-native workflow') vs category-based ('AP software') — and approve the need-based framing",
+        "Should run 3-filter check on each PoD (one-click reconciliation, audit trail, multi-currency)",
+        "Should flag any PoD without specific RTB and request data to support it",
+        "Should NOT use generic phrases like 'leading' or 'innovative' in the statement",
+        "Should suggest a 4Ps consistency check"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "validate-weak-pod",
+      "prompt": "Quick check: my marketing team wants to position our project management tool with the PoD 'fastest project management software for modern teams.' Target segment is mid-market product teams (50-500 employees). We don't have specific speed benchmarks yet. Is this PoD strong?",
+      "expected_assertions": [
+        "Should run scripts/validate_pod.py",
+        "Should FAIL on Exclusive (generic 'fastest' without benchmark)",
+        "Should FAIL on Trustworthy (no RTB provided)",
+        "Should FAIL or warn on Relevant (segment description is vague — 'modern teams')",
+        "Verdict should be REVISE or REPLACE",
+        "Should suggest specific revisions: name a measurable speed metric, name a comparison benchmark, sharpen segment description",
+        "Should NOT just say 'fastest is vague' without explaining the 3-filter rationale"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "three-circles-overlap",
+      "prompt": "Run the 3-circles model for our HR-tech product. Customer needs (mid-market HR teams running remote-first companies, from research): 'fast onboarding, integration with Slack/Notion, automated compliance, custom playbooks per role, peer benchmarking, founder-led culture support.' Our offering as customers see us: 'fast onboarding, integration with Slack/Notion, custom playbooks per role, peer benchmarking.' Competitor (BambooHR) as customers see them: 'integration with Slack/Notion, automated compliance, ATS module, time-off management, expense tracking, full payroll.'",
+      "expected_assertions": [
+        "Should run scripts/three_circles.py with the lists",
+        "Should identify Sweet spot: 'fast onboarding, custom playbooks per role, peer benchmarking' (we have these, customers want them, BambooHR doesn't)",
+        "Should identify Surrender zone: 'integration with Slack/Notion' (commodity)",
+        "Should identify Opportunity: 'automated compliance, founder-led culture support' (customers want, neither we nor BambooHR fully cover — though BambooHR has compliance)",
+        "Should identify Competitor strength: 'automated compliance' (customers want, BambooHR has, we don't)",
+        "Should identify Competitor waste: 'ATS, time-off, expense, payroll' (BambooHR has but customers in this segment didn't list)",
+        "Should recommend strategic action per zone (amplify, accept, kill, build, catch up, ignore)"
+      ]
+    }
+  ]
+}

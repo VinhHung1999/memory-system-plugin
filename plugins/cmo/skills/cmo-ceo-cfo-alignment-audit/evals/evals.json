@@ -1,0 +1,42 @@
+{
+  "skill_name": "cmo-ceo-cfo-alignment-audit",
+  "evals": [
+    {
+      "id": 0,
+      "name": "well-aligned-org",
+      "prompt": "I'm a CMO at a 400-person B2B SaaS company. I want to do a routine quarterly check on my alignment with our CEO and CFO. Things feel mostly good — I have weekly 1:1s with the CEO, our CFO recently signed off on our attribution model, and our forecast variance was 7 percent last quarter. Walk me through an alignment audit.",
+      "expected_assertions": [
+        "Should run the audit (interactive walkthrough or simulate strong-axis answers)",
+        "Should produce overall verdict in healthy band (>=24/30) given the strong signals",
+        "Should still surface 1-2 watch items even in a healthy result (no false 'all green')",
+        "Should suggest a 90-day re-audit cadence",
+        "Should NOT generate generic 'build trust with your CFO' advice"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "low-trust-scenario",
+      "prompt": "Honest audit needed. I'm a CMO who feels increasingly sidelined. The CEO didn't loop me into our recent product strategy pivot, our CFO openly questions our attribution numbers in board meetings, marketing budget got cut 15 percent this quarter, and I haven't had a real CMO-CEO 1:1 in 6 weeks. I need a clear-eyed read on where I stand.",
+      "expected_assertions": [
+        "Should produce overall verdict in at-risk or crisis band (under 17/30)",
+        "Should flag MULTIPLE red indicators (at least 4 reds) consistent with the symptoms described",
+        "Should produce a Top 3 gaps list with week-1 actions",
+        "Should recommend re-audit in 30 days (not 90) due to crisis state",
+        "Should NOT sugarcoat the assessment",
+        "Should recommend specific recurring rituals (weekly intelligence brief, attribution model co-build)"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "first-90-days-new-cfo",
+      "prompt": "Our company just hired a new CFO last month. She's coming from a different industry and seems skeptical of marketing's value. I'm 18 months into my CMO role with strong CEO alignment. How do I quickly diagnose where I stand with the new CFO and what to do in my first 60 days with her?",
+      "expected_assertions": [
+        "Should focus the audit on CFO axis (scope=cfo) given the trigger",
+        "Should produce a 60-day action plan, not generic relationship advice",
+        "Should recommend co-building attribution model as a high-leverage early move",
+        "Should recommend the investment-thesis budget format pattern",
+        "Should NOT assume current attribution model will satisfy new CFO without revalidation"
+      ]
+    }
+  ]
+}

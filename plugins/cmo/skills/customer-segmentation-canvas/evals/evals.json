@@ -1,0 +1,48 @@
+{
+  "skill_name": "customer-segmentation-canvas",
+  "evals": [
+    {
+      "id": 0,
+      "name": "design-fintech-segments",
+      "prompt": "Help me design our customer segments. We're a B2B fintech (Series B, $20M ARR) serving finance teams in companies $10M-$500M revenue. We have a draft ICP of 'mid-market companies' but it feels too broad. Our objectives this year: grow ARR 50%, reduce CAC payback to under 14 months. What segments should we be considering?",
+      "expected_assertions": [
+        "Should run scripts/segment_canvas.py",
+        "Should NOT accept 'mid-market companies' as a real segment (too broad)",
+        "Should propose 2-4 candidate segments with need-similarity, NOT just demographic split",
+        "Should recommend behavioral/psychographic criteria over demographic-only",
+        "Should recommend Kotler strategy appropriate for Series B (single-segment concentration or selective specialization, NOT full coverage)",
+        "Should suggest MAPDA validation as next step",
+        "Should NOT generate generic 'try psychographic segmentation' advice"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "validate-vague-segment",
+      "prompt": "Quick check: my marketing team wants to define our target segment as 'forward-thinking SaaS leaders who value innovation and embrace new technology.' Is this a real segment? What's the verdict?",
+      "expected_assertions": [
+        "Should run scripts/validate_segment.py",
+        "Should FAIL on Measurable (cannot size 'forward-thinking SaaS leaders')",
+        "Should FAIL on Accessible (no identifiable channel for 'innovation-embracing' people)",
+        "Should FAIL on Differentiable (every SaaS exec self-identifies as forward-thinking)",
+        "Verdict should be REPLACE",
+        "Should suggest revision: replace with behavioral + role-based segment (e.g., 'CTOs at $50M+ SaaS who are evaluating their data warehouse in next 12 months')",
+        "Should NOT just say 'this is a vanity segment' without explaining MAPDA failures"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "validate-strong-segment",
+      "prompt": "Validate this segment: 'Heads of People at remote-first US companies (200-2000 employees) hiring across 3+ time zones, currently using Notion + Slack for onboarding without a formal HR platform.' Evidence: about 8000 companies match per LinkedIn data, reachable through HR community Slack groups + remote-work conferences (Remote Forward, RUNNING REMOTE), willing to pay $15K-$45K ACV based on competitor pricing, distinct needs vs traditional HRIS buyers (no payroll/compliance focus), our current product fits closely.",
+      "expected_assertions": [
+        "Should run scripts/validate_segment.py with the evidence",
+        "Should PASS on Measurable (concrete count: 8000)",
+        "Should PASS on Accessible (named channels: Slack groups + conferences)",
+        "Should PASS on Profitable ($15K-45K ACV × 8000 companies × even 1% penetration = $1.2M-$3.6M Year-1 SOM, real)",
+        "Should PASS on Differentiable (distinct needs vs traditional HRIS)",
+        "Should PASS on Actionable (current product fits)",
+        "Verdict should be KEEP",
+        "Should NOT suggest unnecessary revisions to a segment that passes all 5 filters"
+      ]
+    }
+  ]
+}

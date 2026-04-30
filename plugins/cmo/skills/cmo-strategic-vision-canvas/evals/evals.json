@@ -1,0 +1,42 @@
+{
+  "skill_name": "cmo-strategic-vision-canvas",
+  "evals": [
+    {
+      "id": 0,
+      "name": "weak-slogan",
+      "prompt": "Audit our current marketing vision: 'We will be the most loved brand in fintech.' Company context: B2B payments SaaS for mid-market companies, 200 employees, $30M ARR. We want to know if it's a real vision or just a slogan.",
+      "expected_assertions": [
+        "Should score this LOW on all 3 axes (total < 4) and verdict = Slogan",
+        "Should call out 'most loved' as vague (Clarity penalty)",
+        "Should call out missing customer-truth link (Alignment penalty)",
+        "Should call out lack of decision-guidance (Actionability penalty)",
+        "Should produce a revised vision that names the B2B payments customer + a specific strategic capability",
+        "Should NOT produce generic 'visions should be inspiring' advice"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "strong-vision-validation",
+      "prompt": "We're considering this marketing vision for our consumer hospitality marketplace: 'Reinvent travel by creating authentic local experiences.' Is it strategic enough?",
+      "expected_assertions": [
+        "Should score this HIGH (total >= 7) and verdict = Strategic vision OR Worth revising",
+        "Should recognize the customer-truth link (authentic experiences)",
+        "Should recognize action-implications (kill generic-hotel campaigns, scale local-host content)",
+        "Should NOT mistakenly downgrade for being short — short is fine if specific",
+        "Should suggest only minor refinements if any"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "no-vision-blank-slate",
+      "prompt": "We're a B2B HR-tech startup, Series B, 80 employees, $12M ARR, focused on mid-market companies struggling with employee onboarding for remote teams. We have no marketing vision yet. Help me write one.",
+      "expected_assertions": [
+        "Should NOT skip the rubric — must score the proposed vision after generating it",
+        "Should fill in the vision-canvas template (Mission Anchor, Customer Truth, Strategic Capability)",
+        "Should produce a vision statement that names the customer (mid-market remote-team HR leaders) and the capability (e.g., onboarding-as-engagement-driver)",
+        "Should pass the 3 stress-tests OR explicitly flag which tests it might fail",
+        "Should NOT generate a generic HR-tech slogan ('empower modern teams', 'unlock talent')"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "skill_name": "cmo-cross-functional-translation-matrix",
+  "evals": [
+    {
+      "id": 0,
+      "name": "typical-cfo-and-product",
+      "prompt": "I just learned that our enterprise customers using our SSO integration have 4x lower churn than non-SSO users. We have data showing they expand 2x more in year 2. How should I present this to our CFO and Head of Product to advocate for prioritizing SSO improvements?",
+      "expected_assertions": [
+        "Output should have separate sections/rows for CFO and Head of Product",
+        "CFO section should reference CAC, payback, LTV, retention economics — NOT brand awareness",
+        "Product section should reference adoption, activation, expansion — frame SSO as growth lever",
+        "Each section should include a specific ask (budget allocation, roadmap slot)",
+        "Should NOT use generic 'Finance cares about ROI' platitudes"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "vague-prompt",
+      "prompt": "Help me share our recent customer research with the rest of the leadership team",
+      "expected_assertions": [
+        "Should ask clarifying questions OR proceed with default 4 functions (Finance/Product/Ops/HR)",
+        "If proceeding, should pick a sensible 'recent customer research' insight or note assumption",
+        "Output is structured per-function, not a generic 'tips for sharing research'"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "edge-case-legal-and-it",
+      "prompt": "Our recent campaign for healthcare prospects had a 60% higher conversion rate when using customer testimonials with full name + photo. But we want to scale this. What does Legal and IT need to hear before we go big?",
+      "expected_assertions": [
+        "Legal section: HIPAA/GDPR/PII consent management, written consent procedures, data-handling policies — NOT marketing benefits",
+        "IT section: storage/encryption of consent records, access control, integration with consent management platform — NOT campaign metrics",
+        "Should flag specific compliance risks (HIPAA for healthcare, GDPR for EU prospects)",
+        "Should NOT advocate for the campaign — should TRANSLATE risks/asks for Legal/IT to evaluate"
+      ]
+    }
+  ]
+}

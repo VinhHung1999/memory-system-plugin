@@ -1,0 +1,44 @@
+{
+  "skill_name": "marketing-kpi-scorecard-builder",
+  "evals": [
+    {
+      "id": 0,
+      "name": "build-scorecard-from-tactical-metrics",
+      "prompt": "Help me build a board-ready marketing scorecard. We're a B2B SaaS at Series B, $20M ARR. Our objectives this year: grow ARR 50 percent, reduce CAC payback to under 14 months, lift NPS by 10 points. Here are the metrics our team currently tracks: monthly impressions (current 4.2M, target 5M), CTR (current 2.3 percent, target 2.5 percent), MQL count (current 1200/mo, target 1500/mo), MQL-to-SQL rate (current 18 percent, target 25 percent), CAC payback (current 18 months, target 14 months), NRR (current 108 percent, target 115 percent), NPS (current 42, target 50), email open rate (current 24 percent, target 28 percent). What should our scorecard look like?",
+      "expected_assertions": [
+        "Should run scripts/build_scorecard.py with the metrics",
+        "Should classify impressions, CTR, email open rate, MQL count as ACTIVITY metrics and surface as KPI hygiene flags or pair with impact twins",
+        "Should produce traffic-light zoning (CAC payback at 18 vs 14 should be RED; NRR 108 vs 115 should be RED or YELLOW; NPS 42 vs 50 should be RED)",
+        "Should propose Top 3 = impact metrics (CAC payback, NRR, NPS) — NOT activity metrics",
+        "Should suggest pairing activity metrics with impact twins (CTR -> qualified visitor cost; impressions -> qualified reach within ICP; open rate -> trial conversions from email)",
+        "Should NOT just list all 8 metrics in a flat scorecard"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "validate-orphan-kpi",
+      "prompt": "Quick check: my marketing team wants to add 'social media follower count' as a KPI on our quarterly board scorecard. Our strategic objective for the quarter is 'increase trial-to-paid conversion by 25 percent.' Should we add it?",
+      "expected_assertions": [
+        "Should run scripts/validate_kpi.py",
+        "Should FAIL on strategic alignment (follower count does not trace to trial-to-paid conversion)",
+        "Should FAIL on actionability (follower count has no clear corrective lever for the stated objective)",
+        "Verdict should be REPLACE (not just REVISE)",
+        "Should suggest a replacement KPI tied to the objective: e.g., social-sourced trial signups, social-sourced trial-to-paid conversion rate, or social-influenced pipeline",
+        "Should NOT just say 'follower count is a vanity metric' without explaining the 3-filter rationale"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "diagnose-paid-search-miss",
+      "prompt": "Honest diagnosis needed. Our paid search conversion rate is 2.1 percent vs 3.5 percent target — red zone for 4 weeks running. Aggregate Google Ads spend is $80K/mo, no overspend. Looking at the data: Google Search 1.4 percent conversion, Bing 3.8 percent. By campaign: 'demo-request' campaign 1.2 percent, 'free-trial' campaign 3.6 percent. Trend: decline started week of June 12. What's the root cause and what do we do?",
+      "expected_assertions": [
+        "Should run scripts/diagnose_red_zone.py with the structured evidence",
+        "Should identify CONCENTRATION (Google Search + demo-request campaign), not broad decline",
+        "Should distinguish symptom ('paid search conversion is down') from cause (specific underperforming campaign)",
+        "Should hypothesize a specific root cause for the June 12 starting point (competitor outbid, ad copy fatigue, landing-page change, or seasonality) and recommend verification before fix",
+        "Corrective action should target the demo-request Google Search campaign specifically, not 'optimize paid search'",
+        "Should NOT recommend cutting Bing or 'free-trial' (which are healthy)"
+      ]
+    }
+  ]
+}

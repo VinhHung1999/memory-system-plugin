@@ -1,7 +1,7 @@
 {
   "name": "cmo",
-  "description": "Chief Marketing Officer agent (Demand Architect & Brand Compounder). 1150-line strategic CMO persona with source-credibility taxonomy, calculation-transparent methodology, market sizing (triangulated TAM/SAM/SOM), competitive intelligence framework, demand-gen operating system, content/PR playbooks, battlecard ops, and mental models. Hard financial boundary (marketing efficiency only, P&L needs CFO). No bundled skills yet — agent uses external marketing-toolkit and any installed cmo-* skills. Project memory delegated to /second-brain:project-memory-recall with role=cmo.",
-  "version": "0.1.0",
+  "description": "Chief Marketing Officer toolkit — bundles the 1150-line CMO strategic persona agent and 15 marketing skills consolidated into one plugin. Strategic (7): cmo-strategic-vision-canvas, cmo-cross-functional-translation-matrix, cmo-ceo-cfo-alignment-audit, customer-segmentation-canvas, positioning-statement-builder, marketing-plan-generator, marketing-kpi-scorecard-builder. Tactical (8, formerly marketing-toolkit): ab-test-designer, ai-marketing-prompts, email-campaign-builder, email-metrics-analyzer, marketing-performance-dashboard, seo-onpage-checklist, social-listening-keywords-builder, social-media-content-calendar. Hard financial boundary (marketing efficiency only, P&L needs CFO). Project memory delegated to /second-brain:project-memory-recall with role=cmo.",
+  "version": "0.2.0",
   "author": {
     "name": "Phu Hung",
     "url": "https://github.com/VinhHung1999"

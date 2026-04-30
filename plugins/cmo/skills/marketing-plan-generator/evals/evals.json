@@ -1,0 +1,45 @@
+{
+  "skill_name": "marketing-plan-generator",
+  "evals": [
+    {
+      "id": 0,
+      "name": "build-fintech-annual-plan",
+      "prompt": "Build a 12-month marketing plan for our B2B fintech. Series B, $20M ARR, mid-market finance teams ($50M-$500M revenue). Objectives: grow ARR 50% to $30M, reduce CAC payback from 18mo to <14mo, lift NPS from 42 to 52. Budget envelope $2.5M.",
+      "expected_assertions": [
+        "Should run scripts/build_plan.py with all inputs",
+        "Should produce 4 parts in strict order (Analysis → Strategy → Mix → Results)",
+        "Should include CONSTRAINT HEADER at top of each section showing sales target + $2.5M budget",
+        "Should include Part 2 Strategy 5 sub-sections in correct order",
+        "Should ensure Part 4 metrics mirror Part 2 objectives (NRR / CAC payback / NPS)",
+        "Should include anti-plan + kill criteria + decision gates",
+        "Should NOT produce a plan that starts with tactics or skips Analysis"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "validate-bad-plan",
+      "prompt": "Audit this draft plan: '## Q3 Plan: Run a paid social campaign targeting mid-market companies. Goal: 15% pipeline growth. Budget: $200K. KPIs: impressions, CTR, CPL.' Is this a real plan?",
+      "expected_assertions": [
+        "Should identify this is NOT a 4-part plan structure",
+        "Should flag missing Part 1 Analysis (no 5Cs, no SWOT)",
+        "Should flag missing Part 2 Strategy structure (no 5 strategy sub-sections)",
+        "Should flag KPIs are activity metrics not impact metrics",
+        "Should flag 'mid-market companies' as too-broad target segment",
+        "Should suggest building plan from scratch using full 4-part structure",
+        "Should NOT validate this as acceptable"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "single-part-strategy-only",
+      "prompt": "Just give me Part 2 Strategy section template. We're a SaaS HR startup, $12M ARR, focused on remote-first companies. Objective: 50K MAU year 1, retention >70%.",
+      "expected_assertions": [
+        "Should generate ONLY Part 2 Strategy template (not full plan)",
+        "Should include all 5 strategy sub-sections in correct order: Financial / Non-financial / Customer / Target segment / Positioning",
+        "Should include CONSTRAINT HEADER",
+        "Should suggest running customer-segmentation-canvas + positioning-statement-builder for Target Segment + Positioning sections",
+        "Should NOT include Parts 1, 3, or 4"
+      ]
+    }
+  ]
+}
