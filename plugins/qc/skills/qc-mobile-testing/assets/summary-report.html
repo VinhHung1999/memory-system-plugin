@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regression · MoMo · 2026-04-07</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface-2: #161616;
+    --border: #1f1f1f;
+    --border-strong: #2a2a2a;
+    --text: #f5f5f4;
+    --text-muted: #737373;
+    --text-dim: #525252;
+    --pass: #84cc16;
+    --pass-bg: rgba(132, 204, 22, 0.08);
+    --fail: #f43f5e;
+    --fail-bg: rgba(244, 63, 94, 0.08);
+    --warn: #f59e0b;
+    --accent: #38bdf8;
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --sans: 'Geist', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+  }
+
+  body {
+    background-image:
+      radial-gradient(at 20% 0%, rgba(132, 204, 22, 0.04) 0%, transparent 50%),
+      radial-gradient(at 80% 100%, rgba(244, 63, 94, 0.04) 0%, transparent 50%);
+    min-height: 100vh;
+  }
+
+  /* Subtle grain */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    margin-bottom: 64px;
+  }
+  .topbar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .topbar .brand {
+    color: var(--text);
+    font-weight: 700;
+  }
+  .topbar .brand span {
+    color: var(--text-dim);
+    margin-left: 8px;
+    font-weight: 400;
+  }
+  .topbar .meta {
+    display: flex;
+    gap: 24px;
+    color: var(--text-muted);
+  }
+  .topbar .meta span {
+    color: var(--text);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 64px;
+    margin-bottom: 80px;
+    padding-bottom: 64px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: 88px;
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    margin-bottom: 32px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent-color, var(--fail));
+  }
+
+  .hero-tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    max-width: 480px;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .hero-status {
+    border: 1px solid var(--border-strong);
+    padding: 28px;
+    background: var(--surface);
+    position: relative;
+  }
+  .hero-status::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--accent-color, var(--fail));
+  }
+  .hero-status .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+  }
+  .hero-status .verdict {
+    font-family: var(--serif);
+    font-size: 56px;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--accent-color, var(--fail));
+    margin-bottom: 8px;
+  }
+  .hero-status .verdict-desc {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text);
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--border-strong);
+    border-right: none;
+    border-bottom: none;
+  }
+  .hero-stat {
+    border-right: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
+    padding: 20px;
+  }
+  .hero-stat .label {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .hero-stat .value {
+    font-family: var(--serif);
+    font-size: 44px;
+    font-weight: 400;
+    line-height: 1;
+  }
+  .hero-stat .value.pass { color: var(--pass); }
+  .hero-stat .value.fail { color: var(--fail); }
+  .hero-stat .value.dim { color: var(--text-muted); }
+
+  /* ===== SECTION HEADER ===== */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .section-header h2 {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  .section-header h2 em {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+  .section-header .count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ===== FLOWS ===== */
+  .flows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-top: 1px solid var(--border);
+    margin-bottom: 96px;
+  }
+
+  .flow {
+    border-bottom: 1px solid var(--border);
+    padding: 32px 0;
+    display: grid;
+    grid-template-columns: 60px 1fr 200px 100px;
+    gap: 32px;
+    align-items: start;
+    transition: background 0.2s ease;
+    position: relative;
+  }
+  .flow:hover {
+    background: var(--surface);
+  }
+  .flow:hover .flow-id {
+    color: var(--text);
+  }
+
+  .flow-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    padding-top: 6px;
+    transition: color 0.2s ease;
+  }
+
+  .flow-content h3 {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+  .flow-content .flow-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+  }
+
+  .flow-steps {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 16px;
+  }
+  .step-dot {
+    flex: 1;
+    height: 4px;
+    background: var(--pass);
+  }
+  .step-dot.fail { background: var(--fail); }
+  .step-dot.skip { background: var(--text-dim); }
+
+  .flow-content .links {
+    display: flex;
+    gap: 24px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .flow-content .links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border-strong);
+    padding-bottom: 2px;
+    transition: all 0.2s ease;
+  }
+  .flow-content .links a:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .flow-progress {
+    padding-top: 8px;
+  }
+  .flow-progress .ratio {
+    font-family: var(--serif);
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .flow-progress .ratio em {
+    color: var(--text-dim);
+    font-size: 22px;
+  }
+  .flow-progress .duration {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-muted);
+  }
+
+  .flow-status {
+    text-align: right;
+    padding-top: 12px;
+  }
+  .status-mark {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 6px 12px;
+    border: 1px solid currentColor;
+  }
+  .status-mark.pass { color: var(--pass); }
+  .status-mark.fail { color: var(--fail); }
+
+  /* ===== FAILURE DETAIL ===== */
+  .failure-detail {
+    grid-column: 2 / 4;
+    margin-top: 8px;
+    padding: 20px;
+    background: var(--fail-bg);
+    border-left: 2px solid var(--fail);
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .failure-detail .step-name {
+    color: var(--fail);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 10px;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .failure-detail .error {
+    color: var(--text);
+    line-height: 1.6;
+  }
+  .failure-detail .selector {
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  /* ===== RECOMMENDATION ===== */
+  .recommendation {
+    border: 1px solid var(--border-strong);
+    padding: 48px;
+    background: var(--surface);
+    margin-bottom: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .recommendation::before {
+    content: '⌘';
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    font-family: var(--serif);
+    font-size: 220px;
+    color: var(--border-strong);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .recommendation .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .recommendation h3 {
+    font-family: var(--serif);
+    font-size: 36px;
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    max-width: 700px;
+  }
+  .recommendation h3 em {
+    color: var(--accent-color, var(--fail));
+    font-style: italic;
+  }
+  .recommendation p {
+    color: var(--text-muted);
+    font-size: 15px;
+    max-width: 600px;
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+  .recommendation .actions {
+    display: flex;
+    gap: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .recommendation .action {
+    padding: 12px 20px;
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .recommendation .action:hover {
+    border-color: var(--text);
+  }
+  .recommendation .action.primary {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0 64px;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .topbar { animation: fadeUp 0.6s ease 0s both; }
+  .hero { animation: fadeUp 0.6s ease 0.1s both; }
+  .section-header { animation: fadeUp 0.6s ease 0.2s both; }
+  .flow:nth-child(1) { animation: fadeUp 0.5s ease 0.3s both; }
+  .flow:nth-child(2) { animation: fadeUp 0.5s ease 0.4s both; }
+  .flow:nth-child(3) { animation: fadeUp 0.5s ease 0.5s both; }
+  .recommendation { animation: fadeUp 0.6s ease 0.6s both; }
+
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; gap: 48px; }
+    .hero h1 { font-size: 64px; }
+    .flow { grid-template-columns: 40px 1fr; }
+    .flow-progress, .flow-status { grid-column: 2; text-align: left; padding-top: 0; }
+    .failure-detail { grid-column: 1 / -1; }
+  }
+</style>
+</style>
+<title>Regression ▸ {{APP}} ▸ {{RUN_DATE}}</title>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">QC ▸ Regression <span>// instrument</span></div>
+      <div class="meta">
+        <div>Run <span>#{{RUN_ID}}</span></div>
+        <div>App <span>{{APP}}</span></div>
+        <div>Device <span>{{DEVICE}}</span></div>
+        <div>Time <span>{{RUN_DATE}}</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" style="--accent-color: var(--{{VERDICT_CLASS}});">
+    <div>
+      <div class="hero-label">Regression Summary</div>
+      <h1>{{HERO_TITLE_HTML}}</h1>
+      <p class="hero-tagline">{{HERO_TAGLINE}}</p>
+    </div>
+
+    <div class="hero-meta">
+      <div class="hero-status" style="--accent-color: var(--{{VERDICT_CLASS}});">
+        <div class="label">Verdict</div>
+        <div class="verdict" style="color: var(--{{VERDICT_CLASS}});">{{VERDICT}}</div>
+        <div class="verdict-desc">{{VERDICT_DESC}}</div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="label">Flows</div>
+          <div class="value">{{TOTAL_FLOWS}}</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Pass</div>
+          <div class="value pass">{{PASSED_COUNT}}</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Fail</div>
+          <div class="value fail">{{FAILED_COUNT}}</div>
+        </div>
+        <div class="hero-stat">
+          <div class="label">Time</div>
+          <div class="value dim">{{TOTAL_DURATION}}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLOWS -->
+  <section>
+    <div class="section-header">
+      <h2>Flow <em>results</em></h2>
+      <div class="count">{{TOTAL_FLOWS_PADDED}} ▸ executed</div>
+    </div>
+
+    <div class="flows">
+      {{FLOWS_HTML}}
+    </div>
+  </section>
+
+  <!-- RECOMMENDATION -->
+  <section class="recommendation" style="--accent-color: var(--{{VERDICT_CLASS}});">
+    <div class="label">Recommendation</div>
+    <h3>{{RECOMMENDATION_TITLE_HTML}}</h3>
+    <p>{{RECOMMENDATION_BODY}}</p>
+    <div class="actions">
+      {{RECOMMENDATION_ACTIONS}}
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>QC INSTRUMENT ▸ qc-mobile-testing v0.1</div>
+    <div>generated ▸ {{GENERATED_AT}}</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
+
+<!-- ============================================ -->
+<!-- TEMPLATE FRAGMENTS BELOW (not part of output) -->
+<!-- ============================================ -->
+
+<!-- FLOW_TEMPLATE_START -->
+      <article class="flow">
+        <div class="flow-id">{{FLOW_ID}}</div>
+        <div class="flow-content">
+          <h3>{{FLOW_NAME}}</h3>
+          <div class="flow-meta">{{FLOW_META}}</div>
+          <div class="flow-steps">
+            {{STEP_DOTS}}
+          </div>
+          <div class="links">
+            <a href="{{FLOW_DIR}}/report.html">Full Report →</a>
+            <a href="{{FLOW_DIR}}/screenshots/">Screenshots</a>
+            <a href="{{FLOW_DIR}}/explore-log.md">Explore Log</a>
+          </div>
+        </div>
+        <div class="flow-progress">
+          <div class="ratio">{{STEPS_PASSED}}<em>/{{STEPS_TOTAL}}</em></div>
+          <div class="duration">{{DURATION}}</div>
+        </div>
+        <div class="flow-status">
+          <span class="status-mark {{STATUS_CLASS}}">{{STATUS}}</span>
+        </div>
+        {{FAILURE_DETAIL}}
+      </article>
+<!-- FLOW_TEMPLATE_END -->
+
+<!-- STEP_DOT_TEMPLATE_START -->
+            <div class="step-dot {{DOT_CLASS}}"></div>
+<!-- STEP_DOT_TEMPLATE_END -->
+
+<!-- FAILURE_DETAIL_TEMPLATE_START -->
+        <div class="failure-detail">
+          <div class="step-name">{{FAILED_STEP_NAME}}</div>
+          <div class="error">{{FAILED_ERROR}}</div>
+          <div class="selector">{{FAILED_SELECTOR}}</div>
+        </div>
+<!-- FAILURE_DETAIL_TEMPLATE_END -->

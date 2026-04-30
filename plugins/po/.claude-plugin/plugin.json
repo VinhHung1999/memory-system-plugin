@@ -1,0 +1,11 @@
+{
+  "name": "po",
+  "description": "Product Owner toolkit — bundles the PO subagent, 4 core PO skills (po-story-writer, po-backlog-groomer, po-sprint-planner, po-stakeholder-bridge), and 7 Built For Mars UX research skills (onboarding, growth, churn-retention, purchases-subscriptions, psychology, benchmarking, teardowns) grounded in 60+ real product case studies. Project-memory recall is delegated to /second-brain:project-memory-recall (with role=po) so the same generic skill serves all roles.",
+  "version": "0.4.0",
+  "author": {
+    "name": "Phu Hung",
+    "url": "https://github.com/VinhHung1999"
+  },
+  "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+  "license": "MIT"
+}

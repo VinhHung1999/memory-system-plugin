@@ -4,22 +4,22 @@
     "name": "Phu Hung"
   },
   "metadata": {
-    "description": "Maniax — Claude Code plugins collection. Ships: memory-system (4-tier knowledge & memory), marketing-toolkit (8 marketing skills from Google's Digital Marketing certificate), learn-coursera (meta-skill for turning Coursera courses into Claude Code skills), and second-brain (LLM-maintained Obsidian wiki).",
-    "version": "1.13.0"
+    "description": "Maniax — Claude Code plugins collection. Ships: memory-system (project-local knowledge tooling: rules/init-memory/knowledge-updater + pre-commit gate), second-brain (brain2 vault + observation-driven memory pipeline: capture every turn → nightly dream digests → wiki), marketing-toolkit (8 marketing skills), learn-coursera (Coursera-to-skill meta-skill), tmux-team (multi-agent Scrum team scaffolding), po/dev/qc/cmo (role agents + skills).",
+    "version": "3.0.0"
   },
   "plugins": [
     {
       "name": "memory-system",
       "source": "./plugins/memory-system",
-      "description": "4-tier knowledge & memory system: rules + project memory + universal memory + auto-sync. Bundles 5 skills, 3 hooks, and a pre-commit gate that enforces knowledge updates.",
-      "version": "1.0.0",
+      "description": "Project-local knowledge tooling: generate-rules, init-memory, knowledge-updater, reorganize, plus pre-commit-gate hook that blocks commits when knowledge is stale. All brain2 vault interaction lives in second-brain plugin instead.",
+      "version": "1.11.0",
       "author": {
         "name": "Phu Hung"
       },
       "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
       "repository": "https://github.com/VinhHung1999/memory-system-plugin",
       "license": "MIT",
-      "keywords": ["memory", "knowledge", "rules", "auto-memory", "workflow"],
+      "keywords": ["memory", "knowledge", "rules", "auto-memory", "workflow", "pre-commit-gate"],
       "category": "productivity"
     },
     {
@@ -53,8 +53,8 @@
     {
       "name": "second-brain",
       "source": "./plugins/second-brain",
-      "description": "LLM-maintained personal knowledge wiki for your Obsidian vault. Implements the LLM Wiki pattern: instead of RAG on every query, the LLM incrementally compiles knowledge into a persistent, cross-linked wiki of markdown files. Operations: ingest (source → wiki), query (synthesize with citations), lint (broken links / orphans / contradictions), note (discrete topical file), brain-dump (timestamped journal), kanban tasks. Vault path is configurable via the SECOND_BRAIN_VAULT environment variable. Triggers on English and Vietnamese prompts.",
-      "version": "1.0.0",
+      "description": "All brain2 vault interactions + observation-driven memory pipeline. Skills: second-brain (mega: ingest/query/lint/note/brain-dump/kanban), memory-recall (read-only wiki/code-knowledge/), project-memory-recall (role-partitioned per-project query). Active store retired — replaced by Stop hook `observation_logger` that auto-appends every Claude turn to workspace observation.md (auto-creates if missing). Nightly dream skill (planned) digests observation.md → extracts insights to wiki/projects/<X>/memory/<role>.md → archives. 3 hooks: SessionStart inject, UserPromptSubmit reminder, Stop observation_logger. Vault path via SECOND_BRAIN_VAULT.",
+      "version": "3.0.0",
       "author": {
         "name": "Phu Hung"
       },
@@ -63,6 +63,76 @@
       "license": "MIT",
       "keywords": ["second-brain", "knowledge-wiki", "obsidian", "llm-wiki", "note-taking", "kanban", "journal", "personal-knowledge-management"],
       "category": "productivity"
+    },
+    {
+      "name": "tmux-team",
+      "source": "./plugins/tmux-team",
+      "description": "Multi-agent tmux team for Scrum-style projects. Default 3-role team (PO/DEV/QC). Each pane runs `claude --agent <role>`; board state lives as Obsidian Kanban markdown in docs/board/; SessionStart hook injects workflow + sprint + backlog. Successor to tmux-team-creator-md.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Phu Hung"
+      },
+      "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+      "repository": "https://github.com/VinhHung1999/memory-system-plugin",
+      "license": "MIT",
+      "keywords": ["tmux", "scrum", "multi-agent", "subagents", "kanban", "obsidian", "team", "agile"],
+      "category": "productivity"
+    },
+    {
+      "name": "po",
+      "source": "./plugins/po",
+      "description": "Product Owner toolkit — PO subagent, 4 core PO skills (story-writer, backlog-groomer, sprint-planner, stakeholder-bridge), and 7 Built For Mars UX research skills (60+ case studies). Project memory recall is delegated to /second-brain:project-memory-recall (with role=po) so the same generic skill serves all roles.",
+      "version": "0.4.0",
+      "author": {
+        "name": "Phu Hung"
+      },
+      "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+      "repository": "https://github.com/VinhHung1999/memory-system-plugin",
+      "license": "MIT",
+      "keywords": ["product-owner", "scrum", "agile", "backlog", "user-story", "sprint-planning", "wsjf", "stakeholder", "ux", "built-for-mars", "onboarding", "retention", "growth"],
+      "category": "productivity"
+    },
+    {
+      "name": "dev",
+      "source": "./plugins/dev",
+      "description": "Developer toolkit (unified) — single DEV agent owning spec → TDD implementation → self-review → verification across any stack. Bundles karpathy-guidelines (behavioral guardrails) and vercel-react-best-practices (React/Next.js patterns); references /simplify for cleanup. Project memory delegated to /second-brain:project-memory-recall role=dev.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Phu Hung"
+      },
+      "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+      "repository": "https://github.com/VinhHung1999/memory-system-plugin",
+      "license": "MIT",
+      "keywords": ["developer", "scrum", "agile", "tdd", "code-review", "react", "nextjs", "performance", "karpathy", "vercel"],
+      "category": "productivity"
+    },
+    {
+      "name": "qc",
+      "source": "./plugins/qc",
+      "description": "Quality Control toolkit — black-box tester agent (independent of DEV) with 2 dedicated QC skills: qc-mobile-testing (Appium CLI) and qc-web-testing (Playwright CLI). Verifies acceptance criteria, hunts edge cases, files clear bug reports with severity, re-tests after fixes. Project memory delegated to /second-brain:project-memory-recall role=qc.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Phu Hung"
+      },
+      "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+      "repository": "https://github.com/VinhHung1999/memory-system-plugin",
+      "license": "MIT",
+      "keywords": ["qc", "qa", "testing", "scrum", "agile", "appium", "playwright", "black-box", "regression", "edge-cases"],
+      "category": "productivity"
+    },
+    {
+      "name": "cmo",
+      "source": "./plugins/cmo",
+      "description": "Chief Marketing Officer agent (Demand Architect & Brand Compounder). 1150-line strategic CMO persona with source-credibility taxonomy (Official/Tier1/Tier2/Estimate + freshness), triangulated TAM/SAM/SOM methodology, competitive intelligence, demand-gen ops, content/PR playbooks, battlecard ops. Hard financial boundary: marketing efficiency only, P&L needs CFO. No bundled skills yet. Project memory delegated to /second-brain:project-memory-recall role=cmo.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Phu Hung"
+      },
+      "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+      "repository": "https://github.com/VinhHung1999/memory-system-plugin",
+      "license": "MIT",
+      "keywords": ["cmo", "marketing", "gtm", "positioning", "market-sizing", "demand-generation", "brand", "competitive-intelligence", "content-strategy"],
+      "category": "marketing"
     }
   ]
 }

@@ -16,8 +16,7 @@ Initialize structured memory for a project. Auto memory will write to `docs/memo
 
 | Scope | Mechanism | Location | How |
 |-------|-----------|----------|-----|
-| **Project-specific** | Built-in auto memory | `docs/memory/` (in project) | Automatic — Claude learns as you work |
-| **Universal** | Skill `/memory-system:coder-memory-store` | _(managed by that skill — stages to Hung's brain2 vault)_ | Manual or via Stop hook (every 6th stop) |
+| **Project-specific (this skill)** | Built-in auto memory | `docs/memory/` (in project) | Automatic — Claude learns as you work |
 
 ---
 
@@ -110,14 +109,13 @@ Write to `docs/memory/MEMORY.md`:
 ## How This Works
 
 Auto memory writes here automatically as Claude learns project patterns.
-Universal (cross-project) patterns: use /memory-system:coder-memory-store.
 ```
 
 ### 3b. Topic Folders (REQUIRED — each needs INDEX.md)
 
 For each topic:
 1. Create directory: `docs/memory/{topic}/`
-2. Create **INDEX.md** (not README.md — be consistent with universal memory):
+2. Create **INDEX.md** (not README.md):
 
    ```markdown
    # {Topic Name}
@@ -161,7 +159,6 @@ Append:
 ## Project Memory
 
 - Project memory is in `docs/memory/` — auto memory writes here automatically
-- Universal patterns: `/memory-system:coder-memory-store` (cross-project)
 - Update knowledge after big changes: `/memory-system:knowledge-updater`
 ```
 
@@ -183,7 +180,6 @@ Config:
   autoMemoryEnabled → true
 
 Auto memory will now write project learnings to docs/memory/.
-Universal patterns: use /memory-system:coder-memory-store manually.
 For project rules: use /memory-system:generate-rules.
 ```
 

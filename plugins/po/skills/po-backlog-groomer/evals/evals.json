@@ -1,0 +1,26 @@
+{
+  "skill_name": "po-backlog-groomer",
+  "evals": [
+    {
+      "id": 0,
+      "name": "basic-prioritize",
+      "prompt": "Groom the backlog for me. The backlog file is at: /Users/phuhung/.claude/skills/po-backlog-groomer-workspace/iteration-1/test-data/backlog-basic.md\n\nThis is a mobile memory app (React Native). The app's current focus is user acquisition — we want to grow signups. Our sprint is 1 week, team is 2 devs. Prioritize everything and give me the WSJF scores.",
+      "expected_output": "WSJF scores for all 6 stories, P-labels assigned, backlog sorted, grooming summary showing what to pull into sprint next",
+      "files": ["/Users/phuhung/.claude/skills/po-backlog-groomer-workspace/iteration-1/test-data/backlog-basic.md"]
+    },
+    {
+      "id": 1,
+      "name": "health-check",
+      "prompt": "Run a backlog health check on: /Users/phuhung/.claude/skills/po-backlog-groomer-workspace/iteration-1/test-data/backlog-health.md\n\nThis is a mobile couples memory app. Sprint 18 is active. Find all issues before I pull anything into the sprint.",
+      "expected_output": "Health issues detected: duplicate (auth-social-login + auth-social-login-v2), stale story (push-notification-daily from sprint-12), vague title (fix-stuff), missing AC (photo-filter), orphaned epic (epic-timeline-view)",
+      "files": ["/Users/phuhung/.claude/skills/po-backlog-groomer-workspace/iteration-1/test-data/backlog-health.md"]
+    },
+    {
+      "id": 2,
+      "name": "mixed-groom",
+      "prompt": "Full backlog grooming session. Backlog: /Users/phuhung/.claude/skills/po-backlog-groomer-workspace/iteration-1/test-data/backlog-mixed.md\n\nContext: Memoura is a couples memory app (RN). We have a production crash on iOS 17 (crash-login-ios). Team size: 2 devs, 1-week sprint. Goal this sprint: stability first, then growth. Groom everything and tell me what to pull into sprint.",
+      "expected_output": "crash-login-ios forced to P0 (production bug override), L-sized stories flagged for split, sprint recommendation with only S/M items, grooming summary with clear pull list",
+      "files": ["/Users/phuhung/.claude/skills/po-backlog-groomer-workspace/iteration-1/test-data/backlog-mixed.md"]
+    }
+  ]
+}

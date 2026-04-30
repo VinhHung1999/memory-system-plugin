@@ -1,0 +1,11 @@
+{
+  "name": "qc",
+  "description": "Quality Control toolkit — black-box tester agent (independent of DEV) with 2 dedicated QC skills: qc-mobile-testing (Appium CLI for native/RN apps) and qc-web-testing (Playwright CLI for browsers). QC verifies acceptance criteria, hunts edge cases, files clear bug reports with severity, re-tests after fixes. Project memory recall is delegated to /second-brain:project-memory-recall with role=qc.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Phu Hung",
+    "url": "https://github.com/VinhHung1999"
+  },
+  "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+  "license": "MIT"
+}

@@ -1,7 +1,7 @@
 {
   "name": "memory-system",
-  "description": "Wiki-backed knowledge & memory system for Claude Code: stages insights to brain2 vault (raw/<YYYY-MM-DD>/code-knowledge inbox, date-bucketed), recalls from curated wiki/code-knowledge. Rules + project memory + pre-commit gate.",
-  "version": "1.10.8",
+  "description": "Project-local knowledge tooling for Claude Code: generate-rules (scaffold .claude/rules/), init-memory (bootstrap docs/memory/ + auto memory), knowledge-updater (update CLAUDE.md/rules/memory after changes), reorganize (migrate flat → 2-level memory). Plus pre-commit-gate hook that blocks commits when knowledge is stale. All brain2 vault interaction (memory-{recall,store}, project-memory-{recall,store}, ingest/query/lint) lives in the second-brain plugin instead.",
+  "version": "1.11.0",
   "author": {
     "name": "Phu Hung",
     "url": "https://github.com/VinhHung1999"

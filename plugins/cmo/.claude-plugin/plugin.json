@@ -1,0 +1,11 @@
+{
+  "name": "cmo",
+  "description": "Chief Marketing Officer agent (Demand Architect & Brand Compounder). 1150-line strategic CMO persona with source-credibility taxonomy, calculation-transparent methodology, market sizing (triangulated TAM/SAM/SOM), competitive intelligence framework, demand-gen operating system, content/PR playbooks, battlecard ops, and mental models. Hard financial boundary (marketing efficiency only, P&L needs CFO). No bundled skills yet — agent uses external marketing-toolkit and any installed cmo-* skills. Project memory delegated to /second-brain:project-memory-recall with role=cmo.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Phu Hung",
+    "url": "https://github.com/VinhHung1999"
+  },
+  "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+  "license": "MIT"
+}

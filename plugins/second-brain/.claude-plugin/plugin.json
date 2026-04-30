@@ -1,7 +1,7 @@
 {
   "name": "second-brain",
-  "description": "LLM-maintained knowledge wiki for your Obsidian vault. Instead of re-deriving knowledge from raw sources via RAG on every query, the LLM incrementally compiles knowledge into a persistent, cross-linked wiki of markdown files. Supports ingest (source → wiki), query (synthesize with citations), lint (broken links / orphans / contradictions), note (discrete topical file), brain-dump (timestamped journal), and kanban task management. Vault path is configurable via the SECOND_BRAIN_VAULT environment variable. Triggers on English and Vietnamese phrasings.",
-  "version": "1.0.1",
+  "description": "All brain2 vault interactions in one plugin. LLM-maintained knowledge wiki for your Obsidian vault. Skills: second-brain (mega: ingest/query/lint/note/brain-dump/kanban), memory-recall (read-only access to wiki/code-knowledge/), project-memory-recall (role-partitioned per-project memory query). Active store skills retired in favor of observation-driven pipeline: every Claude turn is auto-logged to workspace `observation.md` by the Stop hook (auto-creates if missing); a nightly dream skill (2 AM, planned) reads observation.md and extracts insights into wiki/projects/<X>/memory/<role>.md, then archives the day's log. 3 hooks: SessionStart inject (wiki sections banner), UserPromptSubmit reminder (recall pointer), Stop observation_logger. Vault path configurable via SECOND_BRAIN_VAULT env var.",
+  "version": "3.0.0",
   "author": {
     "name": "Phu Hung",
     "url": "https://github.com/VinhHung1999"

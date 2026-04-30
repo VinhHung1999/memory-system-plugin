@@ -41,7 +41,7 @@ done
 
 ### 3. Classify each flat file
 
-Read each `.md` file (first 20 lines is usually enough to classify). Match content to a category using the same priority as `coder-memory-store`:
+Read each `.md` file (first 20 lines is usually enough to classify). Match content to a category using the same priority as `memory-store`:
 
 1. `bugs/` — fix for specific error, traceback, failure
 2. `decisions/` — "chose X over Y" with tradeoffs

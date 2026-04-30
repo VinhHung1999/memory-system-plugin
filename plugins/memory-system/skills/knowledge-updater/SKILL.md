@@ -13,7 +13,7 @@ After significant code changes, knowledge gets stale — CLAUDE.md may reference
 |-------|----------|-------------|---------|
 | **CLAUDE.md** | `./CLAUDE.md` or `./.claude/CLAUDE.md` | Project-wide conventions change | New build command, project restructure, new git workflow |
 | **Rules** | `./.claude/rules/*.md` | Domain-specific standards change | New API pattern for BE, new component convention for FE |
-| **Memory** | _(managed by `/memory-system:coder-memory-store`)_ | Non-obvious lesson learned | Surprising bug, debugging technique, architecture insight |
+| **Memory** | `auto memory` (in project) | Project-specific lessons | Non-obvious patterns, quirks, gotchas |
 | **Skills** | `./.claude/skills/` | Workflow or procedure changes | Deploy process changed, new testing workflow |
 
 **Decision tree:**
@@ -21,13 +21,12 @@ After significant code changes, knowledge gets stale — CLAUDE.md may reference
 ```
 Is this a project-wide convention everyone must follow?
   → YES → CLAUDE.md (if < 200 lines) or .claude/rules/ (if domain-specific)
-  
+
 Is this specific to a file type or directory?
   → YES → .claude/rules/ with paths: frontmatter
 
-Is this a hard-won lesson or non-obvious pattern?
-  → YES (universal) → delegate to /memory-system:coder-memory-store (it owns the path)
-  → YES (project-specific) → auto memory handles it automatically
+Is this a hard-won project-specific lesson or non-obvious pattern?
+  → YES → auto memory handles it automatically
 
 Is this a changed workflow or procedure?
   → YES → Update the relevant skill in .claude/skills/
@@ -74,28 +73,21 @@ For each significant change, determine:
 - For adding a single new rule to an existing setup, create one with appropriate `paths:` frontmatter
 
 **For memory updates:**
-- Use skill `/memory-system:coder-memory-store` for universal patterns (cross-project) — it owns the path and staging logic
 - Project-specific learnings are handled by built-in auto memory (automatic, no action needed)
-- Don't hard-code paths here; delegation keeps this skill stable across memory-system changes
 
 **For skills updates:**
 - Identify which skill's workflow changed
 - Read the current SKILL.md and update the relevant section
 
-### 4. Memory Domain Routing
-
-Delegate to `/memory-system:coder-memory-store`. That skill owns domain selection, path layout, and duplicate checking. This skill should not need to know where memory files live.
-
-### 5. Report
+### 4. Report
 
 After making updates, report in 1-2 lines:
 
 ```
 Updated: .claude/rules/backend.md (added new validation pattern for API endpoints)
-Updated memory via /memory-system:coder-memory-store (SSE connection timeout workaround)
 ```
 
-### 6. Mark as Ran (unblock git commit/push)
+### 5. Mark as Ran (unblock git commit/push)
 
 After completing the review (whether updates were made or not), mark this session as done so the pre-commit gate unblocks:
 
@@ -118,5 +110,4 @@ If you don't know the session_id, use 'default' as the key. This is safe — the
 - Read before writing — always check current content before modifying
 - Don't duplicate — if the knowledge already exists, skip or merge
 - Be concise — rules and CLAUDE.md should be specific and actionable, not verbose
-- Respect scope — project-specific goes to rules/CLAUDE.md, universal goes to memory
-- When updating universal memory, delegate to `/memory-system:coder-memory-store` — it handles the file format, INDEX.md, and duplicate checking. Project-specific memory is handled by built-in auto memory, not by a skill.
+- Respect scope — project-wide conventions go to CLAUDE.md / rules, project-specific lessons are handled by built-in auto memory automatically

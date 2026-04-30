@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Write(~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Edit(~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Read(~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Bash(mkdir -p ~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Bash(ls ~/Documents/Notes/HungVault/HungVault/brain2/**)",
+      "Bash(grep:*)",
+      "Bash(qmd:*)"
+    ]
+  }
+}

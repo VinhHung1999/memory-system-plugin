@@ -1,28 +1,5 @@
 {
   "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/inject.sh",
-            "timeout": 5,
-            "statusMessage": "🚀 Loading universal memory index..."
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/prompt-reminder.sh",
-            "timeout": 3
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
@@ -32,17 +9,6 @@
             "command": "${CLAUDE_PLUGIN_ROOT}/hooks/pre-commit-gate.sh",
             "timeout": 5,
             "statusMessage": "🚪 Checking knowledge-updater gate..."
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/memory_store_reminder.py",
-            "timeout": 10
           }
         ]
       }

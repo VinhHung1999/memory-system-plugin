@@ -1,0 +1,26 @@
+{
+  "skill_name": "po-sprint-planner",
+  "evals": [
+    {
+      "id": 0,
+      "name": "basic-plan",
+      "prompt": "Plan sprint 58 for me. Backlog: /Users/phuhung/.claude/skills/po-sprint-planner-workspace/iteration-1/test-data/backlog-groomed.md\n\nTeam: 2 devs, 5-day sprint, no absences. App: Memoura (couples memory app). Goal this sprint: fix the crash and start the growth funnel. Give me a sprint plan with capacity calc and sprint-58.md content.",
+      "expected_output": "Capacity calculation shown, MoSCoW selection with Must/Should/Could/Won't, sprint goal written as one outcome sentence, sprint-58.md content produced, 80% capacity buffer respected",
+      "files": ["/Users/phuhung/.claude/skills/po-sprint-planner-workspace/iteration-1/test-data/backlog-groomed.md"]
+    },
+    {
+      "id": 1,
+      "name": "overcommit-pushback",
+      "prompt": "Plan sprint 59. Backlog: /Users/phuhung/.claude/skills/po-sprint-planner-workspace/iteration-1/test-data/backlog-overcommit.md\n\nTeam: 2 devs, 5-day sprint. I want ALL the P0 stories in the sprint — crash fix, social login, onboarding, push notifications, widget, and memory search. Make it happen.",
+      "expected_output": "PO calculates capacity (~9-10 dev-days), detects overcommit (6 P0 stories = 12+ dev-days), pushes back with concrete numbers, proposes Must/Should split, does NOT silently accept all 6 stories",
+      "files": ["/Users/phuhung/.claude/skills/po-sprint-planner-workspace/iteration-1/test-data/backlog-overcommit.md"]
+    },
+    {
+      "id": 2,
+      "name": "carryover-handling",
+      "prompt": "Plan sprint 58. Backlog: /Users/phuhung/.claude/skills/po-sprint-planner-workspace/iteration-1/test-data/backlog-carryover.md\n\nTeam: 2 devs, 5-day sprint. auth-social-login carried over from sprint-57 (DEV got stuck on Apple Sign-In edge case). New sprint goal: complete the auth flow and activate new users.",
+      "expected_output": "Carry-over story treated as Must, reason for carry-over noted in sprint file, capacity accounts for carry-over story, sprint goal covers the carry-over outcome, Won't section explains deferred items",
+      "files": ["/Users/phuhung/.claude/skills/po-sprint-planner-workspace/iteration-1/test-data/backlog-carryover.md"]
+    }
+  ]
+}

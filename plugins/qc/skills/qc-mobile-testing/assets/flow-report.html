@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transfer Flow ▸ MoMo ▸ Run #0247</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500;700&family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --surface: #111111;
+    --surface-2: #161616;
+    --border: #1f1f1f;
+    --border-strong: #2a2a2a;
+    --text: #f5f5f4;
+    --text-muted: #737373;
+    --text-dim: #525252;
+    --pass: #84cc16;
+    --pass-bg: rgba(132, 204, 22, 0.06);
+    --fail: #f43f5e;
+    --fail-bg: rgba(244, 63, 94, 0.08);
+    --warn: #f59e0b;
+    --accent: #38bdf8;
+    --serif: 'Instrument Serif', 'Times New Roman', serif;
+    --sans: 'Geist', -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-image: radial-gradient(at 20% 0%, rgba(132, 204, 22, 0.05) 0%, transparent 50%);
+    min-height: 100vh;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ===== TOP BAR ===== */
+  .topbar {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+    margin-bottom: 56px;
+  }
+  .topbar-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .topbar .crumbs a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .topbar .crumbs a:hover { color: var(--text); }
+  .topbar .crumbs span {
+    color: var(--text);
+    margin-left: 4px;
+  }
+  .topbar .crumbs .sep { color: var(--text-dim); margin: 0 8px; }
+  .topbar .meta {
+    display: flex;
+    gap: 24px;
+    color: var(--text-muted);
+  }
+  .topbar .meta span { color: var(--text); }
+
+  /* ===== HERO ===== */
+  .hero {
+    margin-bottom: 80px;
+    padding-bottom: 56px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 64px;
+    align-items: end;
+  }
+
+  .hero-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: 96px;
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent-color, var(--pass));
+  }
+  .hero-desc {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 22px;
+    color: var(--text-muted);
+    line-height: 1.4;
+    max-width: 560px;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--border-strong);
+    border-right: none;
+    border-bottom: none;
+  }
+  .hero-stat {
+    border-right: 1px solid var(--border-strong);
+    border-bottom: 1px solid var(--border-strong);
+    padding: 22px;
+  }
+  .hero-stat .label {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+  .hero-stat .value {
+    font-family: var(--serif);
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 0.9;
+  }
+  .hero-stat .value.pass { color: var(--pass); }
+  .hero-stat .value.dim { color: var(--text-muted); font-size: 32px; padding-top: 12px; }
+  .hero-stat .value small {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-left: 6px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ===== TEST CASE ===== */
+  .testcase {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    padding: 32px;
+    margin-bottom: 64px;
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 48px;
+  }
+  .testcase .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+  }
+  .testcase .body {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-muted);
+  }
+  .testcase .body strong {
+    color: var(--text);
+    font-weight: 500;
+    display: block;
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+  .testcase .body code {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+  }
+
+  /* ===== SECTION HEADER ===== */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 40px;
+  }
+  .section-header h2 {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+  .section-header h2 em {
+    font-style: italic;
+    color: var(--text-muted);
+  }
+  .section-header .count {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ===== TIMELINE ===== */
+  .timeline {
+    margin-bottom: 96px;
+  }
+
+  .timeline-bar {
+    display: flex;
+    margin-bottom: 56px;
+    border: 1px solid var(--border-strong);
+    height: 36px;
+  }
+  .timeline-segment {
+    background: var(--pass);
+    border-right: 1px solid var(--bg);
+    position: relative;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .timeline-segment:last-child { border-right: none; }
+  .timeline-segment:hover { opacity: 0.7; }
+  .timeline-segment .label {
+    position: absolute;
+    bottom: -22px;
+    left: 0;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .step {
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    display: grid;
+    grid-template-columns: 80px 1fr 280px;
+    gap: 48px;
+  }
+  .step:last-child { border-bottom: 1px solid var(--border); }
+
+  .step-num {
+    font-family: var(--serif);
+    font-size: 64px;
+    line-height: 0.8;
+    color: var(--text-dim);
+    font-weight: 400;
+    padding-top: 4px;
+  }
+  .step-num.pass { color: var(--pass); }
+  .step-num.fail { color: var(--fail); }
+
+  .step-content h3 {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 8px;
+    line-height: 1.1;
+  }
+  .step-content .step-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    max-width: 540px;
+    line-height: 1.6;
+  }
+
+  .actions-block {
+    margin-bottom: 24px;
+  }
+  .actions-block .heading {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .actions-block .heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .actions-list {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 2;
+  }
+  .actions-list .num {
+    color: var(--text-dim);
+    margin-right: 12px;
+  }
+  .actions-list .cmd {
+    color: var(--text);
+  }
+  .actions-list .arg {
+    color: var(--accent);
+  }
+  .actions-list .ok {
+    color: var(--pass);
+    margin-left: 12px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .actions-list .note {
+    color: var(--text-muted);
+    font-size: 10px;
+    margin-left: 8px;
+    font-style: italic;
+  }
+
+  .assert-block {
+    background: var(--pass-bg);
+    border-left: 2px solid var(--pass);
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .assert-block .heading {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--pass);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .assert-block .body {
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .step-screenshot {
+    display: flex;
+    flex-direction: column;
+  }
+  .step-screenshot .heading {
+    font-family: var(--mono);
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .step-screenshot .heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .step-screenshot .frame {
+    border: 1px solid var(--border-strong);
+    padding: 8px;
+    background: var(--surface);
+    aspect-ratio: 9 / 19;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background-image:
+      linear-gradient(135deg, var(--surface-2) 25%, transparent 25%),
+      linear-gradient(225deg, var(--surface-2) 25%, transparent 25%),
+      linear-gradient(45deg, var(--surface-2) 25%, transparent 25%),
+      linear-gradient(315deg, var(--surface-2) 25%, transparent 25%);
+    background-position: 10px 0, 10px 0, 0 0, 0 0;
+    background-size: 20px 20px;
+  }
+  .step-screenshot .meta {
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ===== FOOTER ===== */
+  .summary-footer {
+    margin-top: 96px;
+    padding: 48px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 48px;
+    align-items: center;
+    margin-bottom: 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .summary-footer::before {
+    content: '✓';
+    position: absolute;
+    top: -60px;
+    right: -20px;
+    font-family: var(--serif);
+    font-size: 320px;
+    color: var(--border-strong);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .summary-footer h3 {
+    font-family: var(--serif);
+    font-size: 44px;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 2;
+  }
+  .summary-footer h3 em {
+    font-style: italic;
+    color: var(--accent-color, var(--pass));
+  }
+  .summary-footer p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.7;
+    max-width: 520px;
+    position: relative;
+    z-index: 2;
+  }
+  .summary-footer .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+  }
+  .summary-footer .action {
+    display: block;
+    padding: 14px 24px;
+    border: 1px solid var(--border-strong);
+    color: var(--text);
+    text-decoration: none;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: all 0.2s;
+  }
+  .summary-footer .action:hover {
+    border-color: var(--text);
+  }
+  .summary-footer .action.primary {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 0 64px;
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes growBar {
+    from { transform: scaleX(0); transform-origin: left; }
+    to { transform: scaleX(1); }
+  }
+  .topbar { animation: fadeUp 0.5s ease 0s both; }
+  .hero { animation: fadeUp 0.6s ease 0.1s both; }
+  .testcase { animation: fadeUp 0.5s ease 0.2s both; }
+  .timeline-bar { animation: growBar 0.8s ease 0.3s both; }
+  .step:nth-child(2) { animation: fadeUp 0.5s ease 0.4s both; }
+  .step:nth-child(3) { animation: fadeUp 0.5s ease 0.5s both; }
+  .step:nth-child(4) { animation: fadeUp 0.5s ease 0.6s both; }
+  .step:nth-child(5) { animation: fadeUp 0.5s ease 0.7s both; }
+  .step:nth-child(6) { animation: fadeUp 0.5s ease 0.8s both; }
+  .summary-footer { animation: fadeUp 0.6s ease 0.9s both; }
+
+  @media (max-width: 1000px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 64px; }
+    .step { grid-template-columns: 60px 1fr; gap: 24px; }
+    .step-screenshot { grid-column: 2; max-width: 240px; }
+    .testcase { grid-template-columns: 1fr; gap: 24px; }
+    .summary-footer { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+</style>
+<title>{{FLOW_NAME}} ▸ {{APP}} ▸ Run {{RUN_ID}}</title>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="crumbs">
+        <a href="#">QC</a>
+        <span class="sep">/</span>
+        <a href="#">Run {{RUN_ID}}</a>
+        <span class="sep">/</span>
+        <span>{{FLOW_NAME}}</span>
+      </div>
+      <div class="meta">
+        <div>App <span>{{APP}}</span></div>
+        <div>Device <span>{{DEVICE}}</span></div>
+        <div>Started <span>{{START_TIME}}</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero" style="--accent-color: var(--{{VERDICT_CLASS}});">
+    <div>
+      <div class="hero-label">{{HERO_LABEL}}</div>
+      <h1>{{FLOW_NAME_HTML}}</h1>
+      <p class="hero-desc">{{FLOW_DESC}}</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="label">Steps</div>
+        <div class="value {{VERDICT_CLASS}}">{{STEPS_PASSED}}<small>/ {{STEPS_TOTAL}}</small></div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Result</div>
+        <div class="value {{VERDICT_CLASS}}">{{VERDICT}}</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Duration</div>
+        <div class="value dim">{{DURATION}}</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Asserts</div>
+        <div class="value dim">{{ASSERTS_COUNT}}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEST CASE -->
+  <section class="testcase">
+    <div class="label">Test Case</div>
+    <div class="body">
+      <strong>{{TEST_CASE_TITLE}}</strong>
+      {{TEST_CASE_BODY}}
+    </div>
+  </section>
+
+  <!-- TIMELINE & STEPS -->
+  <section class="timeline">
+    <div class="section-header">
+      <h2>Step <em>by step</em></h2>
+      <div class="count">{{STEPS_TOTAL}} ▸ events</div>
+    </div>
+
+    <div class="timeline-bar">
+      {{TIMELINE_SEGMENTS}}
+    </div>
+
+    {{STEPS_HTML}}
+  </section>
+
+  <!-- SUMMARY FOOTER -->
+  <section class="summary-footer" style="--accent-color: var(--{{VERDICT_CLASS}});">
+    <div>
+      <h3>{{SUMMARY_TITLE_HTML}}</h3>
+      <p>{{SUMMARY_BODY}}</p>
+    </div>
+    <div class="actions">
+      <a href="../../summary.html" class="action primary">Back to summary →</a>
+      <a href="#" class="action">Open script</a>
+      <a href="#" class="action">Re-run flow</a>
+    </div>
+  </section>
+
+  <footer>
+    <div>QC INSTRUMENT ▸ qc-mobile-testing v0.1</div>
+    <div>generated ▸ {{GENERATED_AT}}</div>
+  </footer>
+
+</div>
+
+</body>
+</html>
+
+<!-- ============================================ -->
+<!-- TEMPLATE FRAGMENTS BELOW (not part of output) -->
+<!-- ============================================ -->
+
+<!-- STEP_TEMPLATE_START -->
+    <article class="step">
+      <div class="step-num {{STEP_STATUS}}">{{STEP_NUM}}</div>
+      <div class="step-content">
+        <h3>{{STEP_TITLE}}</h3>
+        <p class="step-desc">{{STEP_DESC}}</p>
+
+        <div class="actions-block">
+          <div class="heading">Actions ▸ executed</div>
+          <div class="actions-list">
+            {{STEP_ACTIONS_HTML}}
+          </div>
+        </div>
+
+        {{STEP_ASSERT_OR_ERROR}}
+      </div>
+      <div class="step-screenshot">
+        <div class="heading">Screenshot</div>
+        <div class="frame">
+          {{SCREENSHOT_HTML}}
+        </div>
+        <div class="meta">
+          <span>{{SCREENSHOT_NAME}}</span>
+          <span>{{STEP_TIME}}</span>
+        </div>
+      </div>
+    </article>
+<!-- STEP_TEMPLATE_END -->
+
+<!-- ACTION_TEMPLATE_START -->
+            <div><span class="num">{{ACTION_NUM}}</span><span class="cmd">{{ACTION_CMD}}</span> {{ACTION_ARGS}}<span class="ok">▸ {{ACTION_RESULT}}</span>{{ACTION_NOTE}}</div>
+<!-- ACTION_TEMPLATE_END -->
+
+<!-- ASSERT_TEMPLATE_START -->
+        <div class="assert-block">
+          <div class="heading">Assert ▸ verified</div>
+          <div class="body">{{ASSERT_TEXT}}</div>
+        </div>
+<!-- ASSERT_TEMPLATE_END -->
+
+<!-- ERROR_TEMPLATE_START -->
+        <div class="assert-block" style="background: var(--fail-bg); border-left-color: var(--fail);">
+          <div class="heading" style="color: var(--fail);">Error ▸ failed</div>
+          <div class="body">{{ERROR_TEXT}}</div>
+        </div>
+<!-- ERROR_TEMPLATE_END -->
+
+<!-- TIMELINE_SEGMENT_TEMPLATE_START -->
+      <div class="timeline-segment" style="flex: {{SEGMENT_FLEX}};"><div class="label">{{SEGMENT_LABEL}}</div></div>
+<!-- TIMELINE_SEGMENT_TEMPLATE_END -->

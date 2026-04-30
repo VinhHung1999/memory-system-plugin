@@ -1,0 +1,26 @@
+{
+  "skill_name": "user-story-writer",
+  "evals": [
+    {
+      "id": 0,
+      "name": "typical-feature-request",
+      "prompt": "You are about to talk to me as if you are my Product Owner on a multi-agent team (PO → TL → DEV). This is your FIRST message — I've just walked up and said:\n\n\"Hey, I want to add a way for customers to save their shopping cart so they can come back later and finish checkout.\"\n\nRespond exactly as you would in the first turn of this conversation. Do not fast-forward through multiple rounds — just your first reply.",
+      "expected_output": "Response asks 2-3 targeted clarifying questions covering 2-3 different dimensions (who / success metric / constraints / scope / edge cases). Does NOT jump straight to writing a user story. Avoids asking more than 3 questions in one turn.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "vague-performance-request",
+      "prompt": "You are my Product Owner on a multi-agent team. Here is a snippet of our conversation so far:\n\n---\nMe: \"The app is slow. Make it faster.\"\nYou: \"Which part of the app feels slow — a specific screen, or overall? What devices and networks? Compared to what — a competitor, or a past version?\"\nMe: \"Just... everything feels sluggish.\"\n---\n\nI just gave you a second vague answer on the same dimension. Respond with your next message.",
+      "expected_output": "Response recognizes vagueness after 2 rounds and offers 2-3 CONCRETE hypotheses (e.g., cold start vs transitions vs search latency) with specific metrics, asking user to pick. Does NOT keep asking open-ended 'which part?' questions. Does NOT just give up and write a story with placeholders.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "permissions-heavy-request",
+      "prompt": "You are about to talk to me as if you are my Product Owner on a multi-agent team. This is your FIRST message — I've just said:\n\n\"Add an 'Invite teammate' button to our workspace settings. The person gets an email, clicks the link, joins the workspace. Pretty simple.\"\n\nRespond exactly as you would in the first turn. Do not fast-forward through multiple rounds.",
+      "expected_output": "Response surfaces at least 2-3 non-obvious edge cases specific to auth/invite domain — examples: who can invite (permissions), invite expiry, re-invite behavior, invitee already has account, invitee already a workspace member, invite cancellation, rate limiting, audit trail. Does NOT accept the 'pretty simple' framing at face value. Does NOT write a complete story without clarifying.",
+      "files": []
+    }
+  ]
+}

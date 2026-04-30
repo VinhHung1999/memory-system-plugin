@@ -1,0 +1,11 @@
+{
+  "name": "tmux-team",
+  "description": "Multi-agent tmux team for Scrum-style projects. Default 3-role team: PO (po plugin), DEV (dev plugin), QC (qc plugin). Each pane runs `claude --agent <role>`; board state lives as Obsidian Kanban markdown in docs/board/; SessionStart hook injects team workflow + sprint + backlog at pane start. Successor to tmux-team-creator-md.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Phu Hung",
+    "url": "https://github.com/VinhHung1999"
+  },
+  "homepage": "https://github.com/VinhHung1999/memory-system-plugin",
+  "license": "MIT"
+}
